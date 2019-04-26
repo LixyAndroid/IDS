@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <style type="text/css">
+        body, html, #allmap {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            margin: 0;
+            font-family: "微软雅黑";
+        }
+    </style>
+    <script src="static/layui/layui.js" type="text/javascript" th:src="@{'static/layui/layui.js'}"></script>
+    <link href="static/layui/css/layui.css" type="text/css" rel="stylesheet" th:href="@{'static/layui/css/layui.css'}"/>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&ak=Qts1DEIvK7Elhlx2Lr0u2Zf1ISkhRSqy"></script>
+    <title>智能车辆调度系统</title>
+</head>
+<body>
+<div id="allmap"></div>
+</body>
+</html>
+<script type="text/javascript">
+    // 百度地图API功能
+    var map = new BMap.Map("allmap");
+    var point = new BMap.Point(116.400244, 39.92556);
+    var center = new BMap.Point(105, 34.27);
+    map.centerAndZoom(center, 6);
+    map.enableScrollWheelZoom(true);
+    var marker = new BMap.Marker(point);  // 创建标注
+    map.addOverlay(marker);              // 将标注添加到地图中
+    marker.addEventListener("click", getAttr);
+
+    function getAttr() {
+        var p = marker.getPosition();       //获取marker的位置
+        alert("marker的位置是" + p.lng + "," + p.lat);
+    }
+
+    layui.use('layer', function () {
+        var $ = layui.jquery, layer = layui.layer;
+        $(function () {
+            $.getJSON("/point/driver", {}, function (data) {
+                console.log(data);
+            })
+        });
+
+    });
+</script>
