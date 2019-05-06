@@ -134,6 +134,13 @@ public class DataLab {
         return new NearestCar(res, dis);
     }
 
+    public static void clear() {
+        map = null;
+        driverList = null;
+        transportTaskList = null;
+        distance = null;
+    }
+
     public static void main(String[] args) {
         String path = FileUtils.getAppPath() + "/src/main/resources";
         List<Driver> drivers = driverList(path + "/vehicle.xls");
