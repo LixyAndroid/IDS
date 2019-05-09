@@ -16,8 +16,10 @@ import com.levin.excel.Driver;
 import com.levin.excel.NearestCar;
 import com.levin.excel.TransportTask;
 import com.levin.util.BmapUtils;
+import com.levin.util.FileUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 先聚类再分组
@@ -50,7 +52,7 @@ public class CFPS extends IDS implements Clustring<TransportTask> {
     /**
      * 禁忌表长度
      */
-    private int NN;
+    protected int NN;
 
 
     public CFPS(int MAX_GEN, List<Driver> driverList, List<TransportTask> taskList, int size, String fitnessType, double alpha, double beta, int NN) {
@@ -111,7 +113,6 @@ public class CFPS extends IDS implements Clustring<TransportTask> {
         //nothing to do
     }
 
-
     public void path() {
         //重置剩余订单列表
         remain = new HashSet<>();
@@ -120,7 +121,10 @@ public class CFPS extends IDS implements Clustring<TransportTask> {
         List<Driver> arranged = new ArrayList<>();
         for (Driver driver : driverList) {
             if (map.getOrDefault(driver.getId(), new ArrayList<>()).size() > 0) {
-                arranged.add(driver);
+                DoubleSummaryStatistics collect = map.get(driver.getId()).stream().collect(Collectors.summarizingDouble(TransportTask::getPlatenNum));
+                if (collect.getSum() > CarPropLab.get(driver.getType()).getG()) {
+                    arranged.add(driver);
+                }
             }
         }
 
@@ -298,6 +302,31 @@ public class CFPS extends IDS implements Clustring<TransportTask> {
                 clusteringResult.add(clusteringDto);
             }
 
+        }
+    }
+
+    public static void main(String[] args) {
+        String path = FileUtils.getAppPath() + "/src/main/resources/";
+
+        int[] alpaha = new int[]{0, 50, 100, 200, 300, 500};
+        int[] NN = new int[]{0, 10, 100, 500, 1000};
+
+        for (int a : alpaha) {
+            for (int b : alpaha) {
+                for (int n : NN) {
+                    StringBuilder str = new StringBuilder(a + "\t" + b + "\t" + n + "\t");
+                    for (int i = 0; i < 10; i++) {
+                        IDS solver = new CFPS(0, DataLab.driverList(path + "vehicle.xls"),
+                                DataLab.taskList(path + "task.xls"), 1, "distance", a, b, n);
+                        SolutionCode solve = solver.solve();
+                        str.append(solve.getFitness()).append("\t");
+                        DataLab.clear();
+                    }
+                    str.append("\n");
+                    //System.out.println(str);
+                    FileUtils.writeFile(path + "result.txt", str.toString());
+                }
+            }
         }
     }
 

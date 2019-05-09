@@ -96,6 +96,7 @@ public class DataLab {
      * type = 0,1,2
      */
     public static int getIdx(String s, int type) {
+        s = s.split("_")[0];
         if (map == null) {
             genDisMatrix();
         }
@@ -120,10 +121,15 @@ public class DataLab {
      * 获取离订单最近的车
      */
     public static NearestCar nearest(TransportTask order, List<Driver> ignore) {
-        int idx = getIdx(order.getId(), 1);
+        return nearest(order, ignore, driverList);
+    }
+
+    public static NearestCar nearest(TransportTask order, List<Driver> ignore, List<Driver> drivers) {
+        String id = order.getId().split("_")[0];
+        int idx = getIdx(id, 1);
         double dis = Double.MAX_VALUE;
-        Driver res = driverList.get(0);
-        for (Driver car : driverList) {
+        Driver res = drivers.get(0);
+        for (Driver car : drivers) {
             int curr = getIdx(car.getId(), 0);
             double distance = getDistance(idx, curr);
             if (distance < dis && distance >= 0 && !ignore.contains(car)) {
@@ -132,6 +138,19 @@ public class DataLab {
             }
         }
         return new NearestCar(res, dis);
+    }
+
+    /**
+     * 获取离订单最近的k辆车
+     */
+    public static List<Driver> nearest(TransportTask task, List<Driver> ignore, int k) {
+        List<Driver> result = new ArrayList<>(k);
+        for (int i = 0; i < k; i++) {
+            NearestCar nearest = nearest(task, ignore);
+            result.add(nearest.getCar());
+            ignore.add(nearest.getCar());
+        }
+        return result;
     }
 
     public static void clear() {

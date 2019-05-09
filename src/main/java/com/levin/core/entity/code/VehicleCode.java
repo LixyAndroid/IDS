@@ -81,4 +81,22 @@ public class VehicleCode {
         }
         return best;
     }
+
+    public void print() {
+        System.out.print(driver.getId());
+        for (OrderCode oc : orderCodeList) {
+            System.out.print("  --> " + oc.getType() + "," + oc.getTask().getId() + "(" + oc.getTask().getPlatenNum() + ")\t");
+        }
+        System.out.println();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(driver.getId());
+        for (OrderCode oc : orderCodeList) {
+            s.append("  --> ").append(oc.getType()).append(",").append(oc.getTask().getId()).append("(").append(oc.getTask().getPlatenNum()).append(")\t");
+        }
+        s.append("\n");
+        return s.toString();
+    }
 }

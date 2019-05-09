@@ -18,6 +18,7 @@ public class FitnessOfDistance implements Fitness {
         double fitness = 0;
         for (VehicleCode vc : code.vehicleCodeList) {
             if (vc.calFitness(this) < 0) {
+                vc.print();
                 return -1;
             }
             fitness += vc.calFitness(this);
@@ -44,7 +45,7 @@ public class FitnessOfDistance implements Fitness {
                     sum -= g;
                 }
                 if (sum < 0 || sum > CarPropLab.get(code.getDriver().getType()).getG()) {
-                    return -1;
+                    //return -1;
                 }
             }
         }

@@ -131,4 +131,11 @@ public class TreeCode extends SolutionCode {
 
         return new TreeCode(vehicleCodeList2, fitnessType);
     }
+
+    @Override
+    public String toString() {
+        return "TreeCode{" +
+                "vehicleCodeList=" + vehicleCodeList +
+                '}';
+    }
 }

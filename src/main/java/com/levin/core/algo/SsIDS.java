@@ -4,6 +4,7 @@ import com.levin.core.entity.code.OrderCode;
 import com.levin.core.entity.code.SolutionCode;
 import com.levin.core.entity.code.TreeCode;
 import com.levin.core.entity.code.VehicleCode;
+import com.levin.entity.CarPropLab;
 import com.levin.excel.DataLab;
 import com.levin.excel.Driver;
 import com.levin.excel.NearestCar;
@@ -47,11 +48,20 @@ public class SsIDS extends IDS {
      */
     private int NN;
 
-    public SsIDS(int MAX_GEN, List<Driver> driverList, List<TransportTask> taskList, int size, String fitnessType, int b1, int b2, int NN) {
+    /**
+     * 是否拆分
+     */
+    private boolean isSplit;
+
+    private int splitType;
+
+    public SsIDS(int MAX_GEN, List<Driver> driverList, List<TransportTask> taskList, int size, String fitnessType, int b1, int b2, int NN, boolean isSplit, int splitType) {
         super(MAX_GEN, driverList, taskList, size, fitnessType);
         this.b1 = b1;
         this.b2 = b2;
         this.NN = NN;
+        this.isSplit = isSplit;
+        this.splitType = splitType;
     }
 
     @Override
@@ -64,12 +74,19 @@ public class SsIDS extends IDS {
     @Override
     protected void populationInit() {
         population = new ArrayList<>();
-        //节约法生成一个初始解
-        population.add(saveGen());
-        //随机生成初始解
-        for (int i = 0; i < super.size - 1; i++) {
-            population.add(genCode());
+        if (isSplit) { //分割订单
+            for (int i = 0; i < size; i++) {
+                population.add(genCode());
+            }
+        } else {
+            //节约法生成一个初始解
+            population.add(saveGen());
+            //随机生成初始解
+            for (int i = 0; i < super.size - 1; i++) {
+                population.add(genCode());
+            }
         }
+
     }
 
     @Override
@@ -104,7 +121,7 @@ public class SsIDS extends IDS {
                 bestS = sc;
             }
         }
-        System.out.println(bestF);
+        //System.out.println(bestF);
     }
 
     /**
@@ -116,11 +133,13 @@ public class SsIDS extends IDS {
 
         for (int i = 0; i < referSet.size(); i++) {
             for (int j = 0; j < i; j++) {
+                //System.out.println(i + "---" + j);
                 List<SolutionCode> solutionCodes = reOrg(referSet.get(i), referSet.get(j));
 
                 if (solutionCodes.size() > 0) {
                     for (SolutionCode solutionCode : solutionCodes) {
                         if (solutionCode == null) {
+                            System.out.println("---");
                             continue;
                         }
 
@@ -163,6 +182,7 @@ public class SsIDS extends IDS {
             for (double d : di) {
                 dd += d;
             }
+
             sc.setDd(Math.abs(dd));
         }
 
@@ -172,6 +192,10 @@ public class SsIDS extends IDS {
                         toCollection(() -> new TreeSet<>(comparingDouble(SolutionCode::getFitness))), ArrayList::new)
         );
 
+        if (population.size() <= (b1 + b2)) {
+            referSet = population;
+            return;
+        }
 
         //优质解
         List<SolutionCode> solutionCodes = population.subList(0, b1);
@@ -248,6 +272,10 @@ public class SsIDS extends IDS {
         }
         if (x >= 1) {
             x = 0.99;
+        }
+
+        if (Double.isNaN(x)) {
+            return 0;
         }
 
         return Double.parseDouble(decimalFormat.format(-Math.log(1 / x - 1)));
@@ -342,9 +370,9 @@ public class SsIDS extends IDS {
 
             for (List<OrderCode> ocs : remain) {
                 int nextInt = random.nextInt(n - 2 > 0 ? n - 2 : 1);
-                while (!(vehicleCodeList.get(nextInt) == null || vehicleCodeList.get(nextInt).getOrderCodeList() == null || vehicleCodeList.get(nextInt).getOrderCodeList().size() == 0)) {
-                    nextInt = random.nextInt(n - 2 > 0 ? n - 2 : 1);
-                }
+                //while (!(vehicleCodeList.get(nextInt) == null || vehicleCodeList.get(nextInt).getOrderCodeList() == null || vehicleCodeList.get(nextInt).getOrderCodeList().size() == 0)) {
+                //nextInt = random.nextInt(n - 2 > 0 ? n - 2 : 1);
+                //}
                 List<OrderCode> insert = new ArrayList<>();
                 for (OrderCode oc : ocs) {
                     insert.add(oc);
@@ -361,10 +389,74 @@ public class SsIDS extends IDS {
     }
 
     /**
+     * 随机切分
+     */
+    private List<TransportTask> randomSplit() {
+        double minWeight = Double.MAX_VALUE;
+
+        for (Driver driver : driverList) {
+            double weight = CarPropLab.get(driver.getType()).getG();
+
+            if (weight < minWeight) {
+                minWeight = weight;
+            }
+        }
+
+        List<TransportTask> taskListAfterSplit = new ArrayList<>();
+        for (TransportTask tt : taskList) {
+            if (tt.getPlatenNum() < minWeight) {
+                taskListAfterSplit.add(tt);
+            } else {
+                int plateNum = (int) Math.ceil(tt.getPlatenNum());
+                int num = random.nextInt(plateNum);
+                List<Integer> random = random(num, plateNum);
+
+                String id = tt.getId();
+                for (int i = 0; i < num; i++) {
+                    TransportTask task = tt.clone();
+                    task.setId(id + "_" + i);
+                    task.setPlatenNum((double) random.get(i));
+                    taskListAfterSplit.add(task);
+                }
+            }
+
+        }
+        return taskListAfterSplit;
+    }
+
+    /**
+     * 按单位切分
+     */
+    private List<TransportTask> unitSplit() {
+        List<TransportTask> taskListAfterSplit = new ArrayList<>();
+        for (TransportTask tt : taskList) {
+            int splitNum = (int) Math.ceil(tt.getPlatenNum());
+            for (int i = 0; i < splitNum; i++) {
+                TransportTask task = tt.clone();
+                task.setId(tt.getId() + "_" + i);
+                task.setPlatenNum(1D);
+                taskListAfterSplit.add(task);
+            }
+        }
+        return taskListAfterSplit;
+    }
+
+    /**
      * 产生一个解编码
      */
     private SolutionCode genCode() {
-        List<TransportTask> orderList = new ArrayList<>(taskList);
+        List<TransportTask> orderList;
+        if (isSplit) { //切分
+            if (splitType == 1) {
+                orderList = unitSplit();
+            } else {
+                orderList = randomSplit();
+            }
+
+        } else {
+            orderList = new ArrayList<>(taskList);
+        }
+
         int c = driverList.size();
         int o = orderList.size();
 
@@ -390,12 +482,12 @@ public class SsIDS extends IDS {
                 continue;
             }
 
-            NearestCar nearestCar = DataLab.nearest(ol.get(0), ignores);
+            NearestCar nearestCar = DataLab.nearest(ol.get(0), ignores, driverList);
             double dis = nearestCar.getDistance();
             Driver car = nearestCar.getCar();
             for (int t = 1; t < ol.size(); t++) {
                 TransportTask order = ol.get(t);
-                nearestCar = DataLab.nearest(order, ignores);
+                nearestCar = DataLab.nearest(order, ignores, driverList);
                 if (nearestCar.getDistance() < dis) {
                     dis = nearestCar.getDistance();
                     car = nearestCar.getCar();
@@ -513,4 +605,5 @@ public class SsIDS extends IDS {
         }
         return solutionCode;
     }
+
 }

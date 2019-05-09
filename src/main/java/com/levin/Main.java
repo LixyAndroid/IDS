@@ -2,6 +2,7 @@ package com.levin;
 
 
 import com.levin.core.algo.CFPS;
+import com.levin.core.algo.CFPSST;
 import com.levin.core.algo.IDS;
 import com.levin.core.algo.SsIDS;
 import com.levin.core.entity.code.SolutionCode;
@@ -35,9 +36,14 @@ public class Main {
                 }
             }
         }*/
-        IDS solver = new CFPS(0, DataLab.driverList(path + "vehicle.xls"), DataLab.taskList(path + "task.xls"), 1, "distance", 50, 300, 1000);
+
+        /*IDS solver = new CFPS(0, DataLab.driverList(path + "vehicle.xls"), DataLab.taskList(path + "task.xls"), 1, "distance", 50, 50, 1000);
         SolutionCode solve = solver.solve();
         System.out.println(solve.getFitness());
-        System.out.println(solve.print());
+        System.out.println(solve.print());*/
+
+        /*IDS solver = new CFPSST(10, DataLab.driverList(path + "vehicle.xls"), DataLab.taskList(path + "task.xls"), 80, "distance", 50, 300, 100, 10, 10);
+        SolutionCode solution = solver.solve();
+        System.out.println(solution.print());*/
     }
 }
