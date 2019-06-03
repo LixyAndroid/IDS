@@ -80,6 +80,22 @@ public abstract class SolutionCode {
         return fitness;
     }
 
+    public void setFitnessType(Fitness fitnessType) {
+        this.fitnessType = fitnessType;
+    }
+
+    public void setVehicleCodeList(List<VehicleCode> vehicleCodeList) {
+        this.vehicleCodeList = vehicleCodeList;
+    }
+
+    public void setFitness(double fitness) {
+        this.fitness = fitness;
+    }
+
+    public void setCarNumUsed(int carNumUsed) {
+        this.carNumUsed = carNumUsed;
+    }
+
     public double getDd() {
         return dd;
     }

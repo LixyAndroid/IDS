@@ -94,7 +94,9 @@ public class BmapUtils {
     }
 
     public static void main(String[] args) {
-        Location geocoder = geocoder("北京邮电大学");
-        System.out.println(geocoder != null ? geocoder.toString() : null);
+        double distance = getDistance(new Point(116, 40.01), new Point(106.68, 35.55));
+        System.out.println(distance);
+        /*Location geocoder = geocoder("北京邮电大学");
+        System.out.println(geocoder != null ? geocoder.toString() : null);*/
     }
 }

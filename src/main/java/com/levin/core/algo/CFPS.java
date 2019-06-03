@@ -306,28 +306,13 @@ public class CFPS extends IDS implements Clustring<TransportTask> {
     }
 
     public static void main(String[] args) {
+        long l = System.currentTimeMillis();
         String path = FileUtils.getAppPath() + "/src/main/resources/";
+        IDS solver = new CFPS(0, DataLab.driverList(path + "vehicle.xls"),
+                DataLab.taskList(path + "task.xls"), 1, "distance", 50, 200, 100);
+        SolutionCode solve = solver.solve();
+        System.out.println(System.currentTimeMillis()-l);
 
-        int[] alpaha = new int[]{0, 50, 100, 200, 300, 500};
-        int[] NN = new int[]{0, 10, 100, 500, 1000};
-
-        for (int a : alpaha) {
-            for (int b : alpaha) {
-                for (int n : NN) {
-                    StringBuilder str = new StringBuilder(a + "\t" + b + "\t" + n + "\t");
-                    for (int i = 0; i < 10; i++) {
-                        IDS solver = new CFPS(0, DataLab.driverList(path + "vehicle.xls"),
-                                DataLab.taskList(path + "task.xls"), 1, "distance", a, b, n);
-                        SolutionCode solve = solver.solve();
-                        str.append(solve.getFitness()).append("\t");
-                        DataLab.clear();
-                    }
-                    str.append("\n");
-                    //System.out.println(str);
-                    FileUtils.writeFile(path + "result.txt", str.toString());
-                }
-            }
-        }
     }
 
 }

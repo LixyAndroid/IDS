@@ -91,23 +91,42 @@ public class SsIDS extends IDS {
 
     @Override
     public SolutionCode solve() {
-        //产生初始解集
-        init();
-        for (int i = 0; i < MAX_GEN; i++) {
-            //从初始解集中产生参考集 B = B1(多样性解)+B2（优质解）
-            genRefer();
-            evaluate();
-
-            //禁忌搜索优化（车辆分配方案不变，只优化装载方案）
-            List<SolutionCode> refer2 = new ArrayList<>();
-            for (SolutionCode sc : referSet) {
-                refer2.add(sc.bestSolution(NN));
+        System.out.println("come in ... ");
+        if (taskList.size() < 3 && driverList.size() < 3) { //邻域搜索
+            System.out.println("neighbor search");
+            super.init();
+            df = (double) taskList.size() / driverList.size();
+            SolutionCode solutionCode = genCode();
+            bestS = solutionCode;
+            bestF = solutionCode.getFitness();
+            for (int i = 0; i < NN; i++) {
+                solutionCode = genCode();
+                if (solutionCode.getFitness() < bestF) {
+                    bestF = solutionCode.getFitness();
+                    bestS = solutionCode;
+                }
             }
-            referSet = refer2;
-            evaluate();
+            System.out.println(bestF);
+        } else { //分散搜索
+            System.out.println("ss search ");
+            //产生初始解集
+            init();
+            for (int i = 0; i < MAX_GEN; i++) {
+                //从初始解集中产生参考集 B = B1(多样性解)+B2（优质解）
+                genRefer();
+                evaluate();
 
-            //子集产生与合并
-            segReg();
+                //禁忌搜索优化（车辆分配方案不变，只优化装载方案）
+                List<SolutionCode> refer2 = new ArrayList<>();
+                for (SolutionCode sc : referSet) {
+                    refer2.add(sc.bestSolution(NN));
+                }
+                referSet = refer2;
+                evaluate();
+
+                //子集产生与合并
+                segReg();
+            }
         }
 
         return bestS;
@@ -121,7 +140,7 @@ public class SsIDS extends IDS {
                 bestS = sc;
             }
         }
-        //System.out.println(bestF);
+        System.out.println(bestF);
     }
 
     /**

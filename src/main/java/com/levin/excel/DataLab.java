@@ -2,6 +2,7 @@ package com.levin.excel;
 
 import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
+import com.levin.core.entity.dto.DriverDto;
 import com.levin.entity.Point;
 import com.levin.util.BmapUtils;
 import com.levin.util.FileUtils;
@@ -151,6 +152,35 @@ public class DataLab {
             ignore.add(nearest.getCar());
         }
         return result;
+    }
+
+    /**
+     * 查找某一订单一定距离内的车辆
+     */
+    public static List<DriverDto> nesrest(TransportTask task, double gama) {
+        List<DriverDto> result = new ArrayList<>();
+        int idx = getIdx(task.getId(), 1);
+        for (Driver driver : driverList) {
+            double dis = getDistance(getIdx(driver.getId(), 0), idx);
+            if (dis < gama) {
+                result.add(new DriverDto(driver, dis));
+            }
+        }
+        return result;
+    }
+
+    public static TransportTask nearest(Driver driver) {
+        TransportTask task = transportTaskList.get(0);
+        double dis = Double.MAX_VALUE;
+        int idx = getIdx(driver.getId(), 0);
+        for (TransportTask tt : transportTaskList) {
+            double tmp = getDistance(idx, getIdx(tt.getId(), 1));
+            if (tmp < dis) {
+                dis = tmp;
+                task = tt;
+            }
+        }
+        return task;
     }
 
     public static void clear() {
