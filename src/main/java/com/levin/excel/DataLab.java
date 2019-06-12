@@ -195,4 +195,20 @@ public class DataLab {
         List<Driver> drivers = driverList(path + "/vehicle.xls");
         System.out.println(drivers.size());
     }
+
+    public static Driver getDriver(String code) {
+        for (Driver driver : driverList) {
+            if (driver.getId().equalsIgnoreCase(code))
+                return driver;
+        }
+        return null;
+    }
+
+    public static TransportTask getTask(String code) {
+        for (TransportTask tt : transportTaskList) {
+            if (tt.getId().equalsIgnoreCase(code))
+                return tt;
+        }
+        return null;
+    }
 }

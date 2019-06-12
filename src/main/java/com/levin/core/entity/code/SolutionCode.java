@@ -77,6 +77,8 @@ public abstract class SolutionCode {
     }
 
     public double getFitness() {
+        if (fitness == 0)
+            return calFitness();
         return fitness;
     }
 

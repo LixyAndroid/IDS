@@ -9,6 +9,7 @@ import com.levin.excel.DataLab;
 import com.levin.excel.Driver;
 import com.levin.excel.NearestCar;
 import com.levin.excel.TransportTask;
+import com.levin.util.IdsUtil;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -260,21 +261,9 @@ public class SsIDS extends IDS {
                 }
             }
 
-            if (vc1.getOrderCodeList() != null) {
-                int size = vc1.getOrderCodeList().size();
-                for (int j = 1; j < size; j++) {
-                    sqs1.add(vc1.getOrderCodeList().get(j - 1).getTask().getId() + "," +
-                            vc1.getOrderCodeList().get(j).getTask().getId());
-                }
-            }
+            sqs(sqs1, vc1);
 
-            if (vc2.getOrderCodeList() != null) {
-                int size = vc2.getOrderCodeList().size();
-                for (int j = 1; j < size; j++) {
-                    sqs2.add(vc2.getOrderCodeList().get(j - 1).getTask().getId() + "," +
-                            vc2.getOrderCodeList().get(j).getTask().getId());
-                }
-            }
+            sqs(sqs2, vc2);
 
         }
 
@@ -298,6 +287,16 @@ public class SsIDS extends IDS {
         }
 
         return Double.parseDouble(decimalFormat.format(-Math.log(1 / x - 1)));
+    }
+
+    private void sqs(Set<String> sqs2, VehicleCode vc2) {
+        if (vc2.getOrderCodeList() != null) {
+            int size = vc2.getOrderCodeList().size();
+            for (int j = 1; j < size; j++) {
+                sqs2.add(vc2.getOrderCodeList().get(j - 1).getTask().getId() + "," +
+                        vc2.getOrderCodeList().get(j).getTask().getId());
+            }
+        }
     }
 
     private static DecimalFormat decimalFormat = new DecimalFormat("#.00");
@@ -375,7 +374,7 @@ public class SsIDS extends IDS {
             }
 
             int n = part1.size() + part2.size();
-            List<Integer> list = random((int) Math.min(n / 1.5, temp.size() / 1.5), temp.size());
+            List<Integer> list = IdsUtil.random((int) Math.min(n / 1.5, temp.size() / 1.5), temp.size());
             List<List<OrderCode>> remain = new ArrayList<>();
             int p = 0;
             for (int k : list) {
@@ -428,7 +427,7 @@ public class SsIDS extends IDS {
             } else {
                 int plateNum = (int) Math.ceil(tt.getPlatenNum());
                 int num = random.nextInt(plateNum);
-                List<Integer> random = random(num, plateNum);
+                List<Integer> random = IdsUtil.random(num, plateNum);
 
                 String id = tt.getId();
                 for (int i = 0; i < num; i++) {
@@ -488,7 +487,7 @@ public class SsIDS extends IDS {
         }
 
         Collections.shuffle(orderList);
-        List<Integer> random = random(carNum, o);
+        List<Integer> random = IdsUtil.random(carNum, o);
         List<List<TransportTask>> orders = new ArrayList<>();
         splitOrders(orderList, random, orders);
 
@@ -561,34 +560,6 @@ public class SsIDS extends IDS {
             orders.add(orderList.subList(p, toIdx));
             p += k;
         }
-    }
-
-
-    /**
-     * 随机分段
-     */
-    private List<Integer> random(int n, int L) {
-        List<Integer> res = new ArrayList<>();
-        int nn = n;
-        for (int i = 0; i < n - 1; i++) {
-            if (L <= 0) {
-                res.add(0);
-            } else {
-                int a = Math.max(1, random.nextInt(Math.max(L / nn + 1, 1)));
-                int b = random.nextInt(a) + L / nn;
-                L = L - b;
-                if (L <= 0) {
-                    res.add(L + b);
-                } else {
-                    res.add(b);
-                }
-            }
-            nn--;
-        }
-
-        res.add(L < 0 ? 0 : L);
-        Collections.shuffle(res);
-        return res;
     }
 
     /**
