@@ -2,7 +2,7 @@
 
 ### 项目架构
 
-![class](.\doc\IDS.png)
+![class](https://gitee.com/bupt_htl/IDS/blob/master/doc/IDS.png)
 
 ### 已实现算法
 
