@@ -1,6 +1,6 @@
 ## JAVA求解VRP问题算法库
 
-### 项目架构
+### 项目类图
 
 ![class](https://gitee.com/bupt_htl/IDS/blob/master/doc/IDS.png)
 
