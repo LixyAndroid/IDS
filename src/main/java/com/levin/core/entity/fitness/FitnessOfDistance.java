@@ -44,9 +44,6 @@ public class FitnessOfDistance implements Fitness {
                 } else {
                     sum -= g;
                 }
-                if (sum < 0 || sum > CarPropLab.get(code.getDriver().getType()).getG()) {
-                    //return -1;
-                }
             }
         }
         return z;

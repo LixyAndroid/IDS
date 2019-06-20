@@ -11,6 +11,8 @@ public class FitnessFactory {
             return new FitnessOfTime();
         } else if (type.equalsIgnoreCase("distance")) {
             return new FitnessOfDistance();
+        }else if (type.equalsIgnoreCase("profit")){
+            return new FitnessOfProfit();
         }
         return null;
     }

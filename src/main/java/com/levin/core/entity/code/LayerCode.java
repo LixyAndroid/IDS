@@ -1,6 +1,5 @@
 package com.levin.core.entity.code;
 
-import com.levin.core.entity.fitness.Fitness;
 import com.levin.entity.Gene;
 
 import java.util.ArrayList;
@@ -24,10 +23,6 @@ public class LayerCode extends SolutionCode {
         return fitness;
     }
 
-    @Override
-    public SolutionCode bestSolution(int NN) {
-        return null;
-    }
 
     @Override
     public String print() {
@@ -62,5 +57,15 @@ public class LayerCode extends SolutionCode {
             res[i++] = g;
         }
         return res;
+    }
+
+    @Override
+    public String toString() {
+        Gene[] mPath = this.toGeneArray();
+        StringBuilder path = new StringBuilder();
+        for (Gene g : mPath) {
+            path.append(g.getCode());
+        }
+        return path.toString();
     }
 }

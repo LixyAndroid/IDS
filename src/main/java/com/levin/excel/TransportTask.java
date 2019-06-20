@@ -39,6 +39,8 @@ public class TransportTask implements Cloneable {
     private double lat2;
     @Excel(name = "订单金额", orderNum = "15", mergeVertical = true, isImportField = "amount")
     private double amount;
+    @Excel(name = "时间窗", orderNum = "16", mergeVertical = true, isImportField = "tw")
+    private int tw;
 
     @Override
     public TransportTask clone() {

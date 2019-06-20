@@ -1,21 +1,17 @@
 package com.levin.core.algo;
 
-import com.levin.core.entity.code.OrderCode;
-import com.levin.core.entity.code.SolutionCode;
-import com.levin.core.entity.code.TreeCode;
-import com.levin.core.entity.code.VehicleCode;
+import com.levin.core.entity.code.*;
 import com.levin.core.entity.dto.ClusteringDto;
 import com.levin.core.entity.dto.DriverDto;
 import com.levin.core.entity.dto.PartitionDto;
+import com.levin.entity.CarPropLab;
 import com.levin.excel.DataLab;
 import com.levin.excel.Driver;
 import com.levin.excel.TransportTask;
 import com.levin.util.FileUtils;
+import com.levin.core.entity.code.LayerCodeUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 聚类 + 分散搜索
@@ -48,26 +44,34 @@ public class CFPSST extends CFPS {
     }
 
     public SolutionCode solve() {
+        super.init();
         //分区
         partition2();
 
-        //分散搜索
+        //优化每个分区
         evolution();
 
         return mergeSolution();
     }
 
-    public SolutionCode mergeSolution() {
+    private SolutionCode mergeSolution() {
         Map<String, List<OrderCode>> map = new HashMap<>();
         for (SolutionCode sc : partitionResult) {
             for (VehicleCode vc : sc.vehicleCodeList) {
-                map.put(vc.getDriver().getId(), vc.getOrderCodeList());
+                if (vc.getValue() == 2)
+                    continue;
+
+                if (vc.getOrderCodeList() != null && vc.getOrderCodeList().size() > 0) {
+                    List<OrderCode> orderCodes = map.getOrDefault(vc.getDriver().getId(),new ArrayList<>());
+                    orderCodes.addAll(vc.getOrderCodeList());
+                    map.put(vc.getDriver().getId(), orderCodes);
+                }
             }
         }
 
         List<VehicleCode> vehicleCodeList = new ArrayList<>();
         for (Driver driver : driverList) {
-            if (map.get(driver.getId()) != null) {
+            if (map.get(driver.getId()) != null && map.get(driver.getId()).size() > 0) {
                 vehicleCodeList.add(new VehicleCode(driver, 1, map.get(driver.getId())));
             } else {
                 vehicleCodeList.add(new VehicleCode(driver, 0, new ArrayList<>(0)));
@@ -146,23 +150,104 @@ public class CFPSST extends CFPS {
     }
 
     /**
-     * 分散搜索
+     * 优化每个分区
      */
-    public void evolution() {
+    private void evolution() {
         double sum = 0;
         for (PartitionDto partitionDto : partitionList) {
+            System.out.println("===============");
             if (partitionDto.getDrivers().size() == 0) {
-                System.out.println("该分区没有足够车辆");
+                System.out.println("该分区没有足够车辆,可在 \'" + partitionDto.getTaskList().get(0).getStart() + "\' 安排新的车辆");
                 continue;
             }
 
-            IDS solver = new SsIDS(MAX_GEN, partitionDto.getDrivers(), partitionDto.getTaskList(), size, fitnessType, b1, b2, NN, true, 2);
-            SolutionCode solve = solver.solve();
-            sum += solve.getFitness();
-            partitionResult.add(solve);
+            //订单切分
+            List<TransportTask> taskList = randomSplit(partitionDto);
+
+            //按分区内车辆数和订单数选择不同算法
+            if (taskList.size() < 3 || partitionDto.getDrivers().size() < 3) { //禁忌搜索
+                SolutionCode solutionCode = TreeCodeUtil.gencode(taskList, driverList, fitnessType);
+                Set<SolutionCode> set = new HashSet<>(NN);  //禁忌表
+                set.add(solutionCode);
+                double bf = solutionCode.getFitness();
+                SolutionCode bs = solutionCode;
+                for (int i = 0; i < NN; i++) {
+                    solutionCode = TreeCodeUtil.gencode(taskList, driverList, fitnessType);
+                    if (!set.contains(solutionCode) && solutionCode.getFitness() < bf) {
+                        bf = solutionCode.getFitness();
+                        bs = solutionCode;
+                    }
+                    System.out.println(sum+bf);
+                    set.add(solutionCode);
+                }
+                sum += bf;
+
+                partitionResult.add(bs);
+            } else { //分散搜索
+                IDS solver = new SsIDS(MAX_GEN, partitionDto.getDrivers(), taskList, size, fitnessType, b1, b2, NN, true, 2);
+                SolutionCode solve = solver.solve();
+                sum += solve.getFitness();
+                partitionResult.add(solve);
+            }
+
         }
         bestF = sum;
         System.out.println("最终结果:" + sum);
+    }
+
+    /**
+     * 随机切分
+     */
+    private List<TransportTask> randomSplit(PartitionDto partitionDto) {
+        double minWeight = Double.MAX_VALUE;
+
+        for (Driver driver : partitionDto.getDrivers()) {
+            double weight = CarPropLab.get(driver.getType()).getG();
+
+            if (weight < minWeight) {
+                minWeight = weight;
+            }
+        }
+
+        List<TransportTask> taskListAfterSplit = new ArrayList<>();
+        for (TransportTask tt : partitionDto.getTaskList()) {
+            if (tt.getPlatenNum() < minWeight) {
+                taskListAfterSplit.add(tt);
+            } else {
+                int plateNum = (int) Math.ceil(tt.getPlatenNum());
+                int num = random.nextInt(plateNum);
+                List<Integer> random = LayerCodeUtil.random(num, plateNum);
+
+                String id = tt.getId();
+                for (int i = 0; i < num; i++) {
+                    TransportTask task = tt.clone();
+                    task.setId(id + "_" + i); //切分后订单的id
+                    task.setPlatenNum((double) random.get(i));   //切分后订单的需求量
+                    task.setAmount(tt.getAmount() * task.getPlatenNum() / tt.getPlatenNum());  //切分后订单的金额等比例切分
+                    taskListAfterSplit.add(task);
+                }
+            }
+
+        }
+        return taskListAfterSplit;
+    }
+
+
+    /**
+     * 按单位切分
+     */
+    private List<TransportTask> unitSplit(PartitionDto partitionDto) {
+        List<TransportTask> taskListAfterSplit = new ArrayList<>();
+        for (TransportTask tt : partitionDto.getTaskList()) {
+            int splitNum = (int) Math.ceil(tt.getPlatenNum());
+            for (int i = 0; i < splitNum; i++) {
+                TransportTask task = tt.clone();
+                task.setId(tt.getId() + "_" + i);
+                task.setPlatenNum(1D);
+                taskListAfterSplit.add(task);
+            }
+        }
+        return taskListAfterSplit;
     }
 
     public static void testPara() {
@@ -203,11 +288,11 @@ public class CFPSST extends CFPS {
 
     public static void test() {
         String path = FileUtils.getAppPath() + "/src/main/resources/";
-        IDS solver = new CFPSST(1, DataLab.driverList(path + "vehicle.xls"),
-                DataLab.taskList(path + "task.xls"), 100, "distance", 50, 200, 200, 1000, 30, 30);
+        IDS solver = new CFPSST(3, DataLab.driverList(path + "vehicle.xls"),
+                DataLab.taskList(path + "task.xls"), 100, "distance", 50, 200, 50, 1000, 30, 30);
         SolutionCode solve = solver.solve();
         System.out.println(solve.getFitness());
-        solve.print();
+        System.out.println(solve.print());
         DataLab.clear();
     }
 

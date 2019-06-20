@@ -102,7 +102,7 @@ public class CFPS extends IDS implements Clustring<TransportTask> {
         SolutionCode solution = new TreeCode(vehicleCodeList, fitnessType);
 
         //tabu 优化每辆车的行车路线
-        SolutionCode bestSolution = solution.bestSolution(NN);
+        SolutionCode bestSolution = solution.bestNeighbor(NN);
         this.bestS = bestSolution;
         this.bestF = bestSolution.calFitness();
         return bestSolution;

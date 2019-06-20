@@ -14,16 +14,15 @@ public class FitnessOfProfit implements Fitness {
         double fitness = 0;
         for (VehicleCode vc : code.vehicleCodeList) {
             if (vc.calFitness(this) < 0) {
-                vc.print();
                 return -1;
             }
 
-            if (vc.getOrderCodeList() == null || vc.getValue() == 0)
+            if (vc.getOrderCodeList() == null || vc.getValue() == 0 || vc.getValue() == 2)
                 continue;
 
             fitness += vc.calFitness(this);
         }
-        return fitness;
+        return 100000 / fitness;
     }
 
     @Override
@@ -35,6 +34,6 @@ public class FitnessOfProfit implements Fitness {
                 profitSum += orderCode.getTask().getAmount();
             }
         }
-        return profitSum - foc.calculate(code);
+        return Math.abs(profitSum - foc.calculate(code));
     }
 }

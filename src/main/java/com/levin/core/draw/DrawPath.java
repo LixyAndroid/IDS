@@ -44,12 +44,13 @@ public class DrawPath extends JPanel {
 
         //聚类分区
         String path = FileUtils.getAppPath() + "/src/main/resources/";
-        CFPSST cfpsst = new CFPSST(0, DataLab.driverList(path + "vehicle.xls"), DataLab.taskList(path + "task.xls"), 1, "distance", 50, 200, 100,100, 10, 30);
+        CFPSST cfpsst = new CFPSST(0, DataLab.driverList(path + "vehicle.xls"), DataLab.taskList(path + "task.xls"), 1, "distance", 50, 200, 100, 100, 10, 30);
         List<PartitionDto> partition = cfpsst.partition2();
 
         /*int t = 19;
         int i = 0;*/
         //画图
+        int t = 0;
         for (PartitionDto partitionDto : partition) {
             /*if (i++ != t)
                 continue;*/
@@ -63,6 +64,7 @@ public class DrawPath extends JPanel {
             }
 
             for (TransportTask task : taskList) {
+                //if (partitionDto.getTaskList().size() > 4)
                 drawOrder(g, new Point(task.getLat1(), task.getLng1()), new Point(task.getLat2(), task.getLng2()));
                 all.add(new com.levin.core.draw.Point(task.getLat1(), task.getLng1()));
                 all.add(new com.levin.core.draw.Point(task.getLat2(), task.getLng2()));
@@ -70,9 +72,10 @@ public class DrawPath extends JPanel {
 
             LinkedList<com.levin.core.draw.Point> smallestPolygon = MinimumBoundingPolygon.findSmallestPolygon(all);
             if (smallestPolygon != null) {
-                //drawBound(g, smallestPolygon);
+                drawBound(g, smallestPolygon);
             }
-            //break;
+            /*if (t++ == 6)
+                break;*/
         }
 
         //savePic(this, "D:/dp.png");
@@ -100,7 +103,7 @@ public class DrawPath extends JPanel {
 
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setColor(Color.red);
+        g2d.setColor(Color.black);
         g2d.drawPolygon(xx, yy, 5);
         g2d.fillPolygon(xx, yy, 5);
     }
@@ -125,7 +128,7 @@ public class DrawPath extends JPanel {
 
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setColor(Color.green);
+        g2d.setColor(Color.red);
         g2d.drawPolygon(xx, yy, 4);
         g2d.fillPolygon(xx, yy, 4);
     }
@@ -144,7 +147,7 @@ public class DrawPath extends JPanel {
         // 抗锯齿
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // 设置画笔颜色
-        g2d.setColor(new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255)));
+        g2d.setColor(new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255), 64));
         float[] dash = new float[]{5, 10};
         BasicStroke bs2 = new BasicStroke(
                 1,                      // 画笔宽度/线宽
@@ -167,7 +170,8 @@ public class DrawPath extends JPanel {
             yPoints[i] = (int) trans.getLng();
         }
 
-        g2d.drawPolyline(xPoints, yPoints, nPoints);
+        //g2d.drawPolyline(xPoints, yPoints, nPoints);
+        g2d.fillPolygon(xPoints, yPoints, nPoints);
     }
 
     private void drawVehicle(Graphics g, Point point) {
@@ -176,7 +180,7 @@ public class DrawPath extends JPanel {
         // 抗锯齿
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // 设置画笔颜色
-        g2d.setColor(Color.BLACK);
+        g2d.setColor(Color.green);
 
         Point point1 = trans(point);
         int starx = (int) point1.getLat() - r;
@@ -206,7 +210,7 @@ public class DrawPath extends JPanel {
 
         // 1. 两点绘制线段: 点(20, 50), 点(200, 50)
         g2d.setStroke(new BasicStroke(1));
-
+        g2d.setColor(Color.gray);
         g2d.drawLine(sx, sy, ex, ey);
 
         drawTriangle(g, start1);

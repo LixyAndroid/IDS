@@ -2,10 +2,13 @@ package com.levin.util;
 
 
 import com.levin.entity.Point;
+import com.levin.excel.DataLab;
+import com.levin.excel.TransportTask;
 import com.levin.util.bmap.GeoResult;
 import com.levin.util.bmap.Location;
 import com.levin.util.bmap.drive.GeoDis;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -94,9 +97,10 @@ public class BmapUtils {
     }
 
     public static void main(String[] args) {
-        double distance = getDistance(new Point(116, 40.01), new Point(106.68, 35.55));
-        System.out.println(distance);
-        /*Location geocoder = geocoder("北京邮电大学");
-        System.out.println(geocoder != null ? geocoder.toString() : null);*/
+        String path = FileUtils.getAppPath() + "/src/main/resources/";
+        List<TransportTask> taskList = DataLab.taskList(path + "task.xls");
+        for (TransportTask tt : taskList) {
+            System.out.println(tt.getAmount());
+        }
     }
 }

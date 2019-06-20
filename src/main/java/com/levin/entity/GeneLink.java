@@ -1,10 +1,11 @@
 package com.levin.entity;
 
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class GLink<T> implements Iterable {
+public class GeneLink<T> implements Iterable {
 
     public Node head = null;
     public Node tail = null;
@@ -26,11 +27,11 @@ public class GLink<T> implements Iterable {
         }
     }
 
-    public GLink() {
+    public GeneLink() {
 
     }
 
-    public GLink(T... data) {
+    public GeneLink(T... data) {
         for (T t : data) {
             addNode(t);
         }
@@ -198,5 +199,6 @@ public class GLink<T> implements Iterable {
             }
         };
     }
+
 
 }

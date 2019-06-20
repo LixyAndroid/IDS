@@ -20,6 +20,11 @@ public class DataLab {
     public static double[][] distance;
 
     /**
+     * 车辆平均滞留时间
+     */
+    private static double avgTimeOfCar = 0;
+
+    /**
      * 从excel文件获取司机列表
      *
      * @param path 文件路径
@@ -54,6 +59,7 @@ public class DataLab {
             return new ArrayList<>();
         }
         transportTaskList = ExcelImportUtil.importExcel(file, TransportTask.class, new ImportParams());
+        //transportTaskList = transportTaskList.subList(90, 120);
         return transportTaskList;
     }
 
@@ -210,5 +216,17 @@ public class DataLab {
                 return tt;
         }
         return null;
+    }
+
+    public static double getAvgTimeOfCar() {
+        if (avgTimeOfCar > 0)
+            return avgTimeOfCar;
+        else {
+            double sum = 0;
+            for (Driver driver : driverList) {
+                sum += driver.getRetention();
+            }
+            return sum / driverList.size();
+        }
     }
 }
