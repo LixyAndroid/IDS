@@ -2,7 +2,7 @@
 
 ### 项目架构
 
-![class](D:\Levi\code\IDS\v2\IDS\doc\class.png)
+![class](.\doc\IDS.png)
 
 ### 已实现算法
 
@@ -12,5 +12,6 @@
 - PSO
 - SA
 - SA-PSO
+- MCSAPSO
 - SS
 - 聚类
