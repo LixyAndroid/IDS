@@ -2,7 +2,7 @@
 
 ### 项目类图
 
-![class](https://github.com/eyric/IDS/blob/master/doc/IDS.png)
+![class](https://gitee.com/eyric/IDS/blob/master/doc/IDS.png)
 
 ### 已实现算法
 
