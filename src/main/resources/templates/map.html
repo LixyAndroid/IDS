@@ -12,16 +12,23 @@
             font-family: "微软雅黑";
         }
     </style>
-    <script src="static/layui/layui.js" type="text/javascript" th:src="@{'static/layui/layui.js'}"></script>
-    <link href="static/layui/css/layui.css" type="text/css" rel="stylesheet" th:href="@{'static/layui/css/layui.css'}"/>
+    <script src="../static/layui/layui.js" type="text/javascript" th:src="@{'../static/layui/layui.js'}"></script>
+    <link href="../static/layui/css/layui.css" type="text/css" rel="stylesheet"
+          th:href="@{'../static/layui/css/layui.css'}"/>
     <script type="text/javascript"
             src="http://api.map.baidu.com/api?v=2.0&ak=Qts1DEIvK7Elhlx2Lr0u2Zf1ISkhRSqy"></script>
-    <title>智能车辆调度系统</title>
+    <title>智能车辆调度系统演示v1.0</title>
 </head>
 <body>
-<div id="allmap"></div>
+<!--<div style="margin-top: 10px;height: 100px">
+
+</div>-->
+
+<!--<hr class="layui-bg-orange">-->
+<div id="allmap" style="margin-top: 0"></div>
 </body>
 </html>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script type="text/javascript">
     // 百度地图API功能
     var map = new BMap.Map("allmap");
@@ -29,22 +36,62 @@
     var center = new BMap.Point(105, 34.27);
     map.centerAndZoom(center, 6);
     map.enableScrollWheelZoom(true);
-    var marker = new BMap.Marker(point);  // 创建标注
+
+    /*var marker = new BMap.Marker(point);  // 创建标注
     map.addOverlay(marker);              // 将标注添加到地图中
-    marker.addEventListener("click", getAttr);
+    marker.addEventListener("click", getAttr);*/
 
     function getAttr() {
         var p = marker.getPosition();       //获取marker的位置
-        alert("marker的位置是" + p.lng + "," + p.lat);
+        alert("[" + p.lng + "," + p.lat + "]");
     }
 
-    layui.use('layer', function () {
-        var $ = layui.jquery, layer = layui.layer;
-        $(function () {
-            $.getJSON("/point/driver", {}, function (data) {
-                console.log(data);
-            })
+    $(function () {
+        $.getJSON("/map/driver", {}, function (data) {
+            let points = [];  // 添加海量点数据
+            for (let i = 0; i < data.length; i++) {
+                let driver = data[i];
+                let point = new BMap.Point(driver.lng, driver.lat);
+                points.push(point);
+            }
+            var options = {
+                size: BMAP_POINT_SIZE_NORMAL,
+                shape: BMAP_POINT_SHAPE_STAR,
+                color: 'green'
+            }
+            var pointCollection = new BMap.PointCollection(points, options);
+            pointCollection.addEventListener('click', getAttr);
+            map.addOverlay(pointCollection);  // 添加Overlay
         });
 
-    });
+        $.getJSON("/map/task", {}, function (data) {
+            let points = [];  // 添加海量点数据
+
+            for (let i = 0; i < data.length; i++) {
+                let task = data[i];
+                let start = new BMap.Point(task.lng1, task.lat1);
+                let end = new BMap.Point(task.lng2, task.lat2);
+                points.push(start);
+                points.push(end);
+                /*    let marker = new BMap.Marker(start);  // 创建标注
+                    let marker2 = new BMap.Marker(end);  // 创建标注
+                    map.addOverlay(marker);              // 将标注添加到地图中
+                    map.addOverlay(marker2);              // 将标注添加到地图中
+                    marker.addEventListener("click", getAttr);*/
+
+                var options = {
+                    //BMAP_POINT_SHAPE_STAR
+                    size: BMAP_POINT_SIZE_SMALL,
+                    shape: BMAP_POINT_SHAPE_SQUARE,
+                    color: 'red'
+                }
+                var pointCollection = new BMap.PointCollection(points, options);
+                pointCollection.addEventListener('click', getAttr);
+                map.addOverlay(pointCollection);  // 添加Overlay
+                var polyline = new BMap.Polyline([start, end
+                ], {strokeColor: "blue", strokeWeight: 1, strokeOpacity: 0.5});   //创建折线
+                map.addOverlay(polyline);
+            }
+        })
+    })
 </script>

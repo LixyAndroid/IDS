@@ -103,9 +103,7 @@ public class GaIDS extends IDS {
 
     /**
      * 赌轮选择策略挑选
-     *
-     * @return
-     */
+     **/
     public LayerCode select() {
         int i = 0;
         float ran = (float) (random.nextInt(65535) % 1000 / 1000.0);
@@ -129,7 +127,7 @@ public class GaIDS extends IDS {
      *
      * @param ch 起始染色体
      */
-    public void tabu(LayerCode ch) {
+    private void tabu(LayerCode ch) {
         SolutionCode neighbor = ch.bestNeighbor(1);
         tabuList = new TreeSet<>();
         for (int tt = 0; tt < N; tt++) {
@@ -170,7 +168,7 @@ public class GaIDS extends IDS {
      * @param ch1 染色体1
      * @param ch2 染色体2
      */
-    public void cross(LayerCode ch1, LayerCode ch2) {
+    private void cross(LayerCode ch1, LayerCode ch2) {
         Gene[] temp1 = removeDcode(ch1);
         Gene[] temp2 = removeDcode(ch2);
 
@@ -224,7 +222,7 @@ public class GaIDS extends IDS {
      *
      * @param ch 变异染色体
      */
-    public void variation(LayerCode ch) {
+    private void variation(LayerCode ch) {
         Gene[] temp = removeDcode(ch);
 
         //生成交换位置
@@ -248,7 +246,7 @@ public class GaIDS extends IDS {
     /**
      * 去除送货码基因
      */
-    public Gene[] removeDcode(LayerCode ch) {
+    private Gene[] removeDcode(LayerCode ch) {
         Gene[] path = ch.toGeneArray();
         Gene[] temp = new Gene[ts];
 
@@ -266,9 +264,8 @@ public class GaIDS extends IDS {
      * 增加送货码
      *
      * @param temp 车辆码+取货码
-     * @return
      */
-    public LayerCode newCh(Gene[] temp) {
+    private LayerCode newCh(Gene[] temp) {
         //保证第一个基因位为车辆码
         if (temp[0].getType() != 1) {
             for (int k = 0; k < ts; k++) {

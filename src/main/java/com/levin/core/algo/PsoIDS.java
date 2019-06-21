@@ -13,11 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * 粒子群算法
+ * 粒子群算法求解VRP
  */
 public class PsoIDS extends IDS {
     private List<LayerCode> mUnits = new ArrayList<>();   //粒子群
-    private float w;    //惯性权重
+    private static final float w = 0.5f;    //惯性权重
 
     private HashMap<Integer, LayerCode> Pd = new HashMap<>();    //一颗粒子历代中出现最好的解
     private LayerCode Pgd;   // 整个粒子群经历过的的最好的解，每个粒子都能记住自己搜索到的最好解
@@ -30,7 +30,7 @@ public class PsoIDS extends IDS {
     /**
      * 初始温度
      */
-    private float T0;
+    private float T0 = 5000f;
 
     /**
      * 当前温度
@@ -42,11 +42,8 @@ public class PsoIDS extends IDS {
      */
     private float alpha = 0.9f;
 
-    public PsoIDS(int MAX_GEN, List<Driver> driverList, List<TransportTask> taskList, int size, String fitnessType, float w, float t0, float alpha) {
+    public PsoIDS(int MAX_GEN, List<Driver> driverList, List<TransportTask> taskList, int size, String fitnessType) {
         super(MAX_GEN, driverList, taskList, size, fitnessType);
-        this.w = w;
-        T0 = t0;
-        this.alpha = alpha;
     }
 
     @Override

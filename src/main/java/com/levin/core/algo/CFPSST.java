@@ -184,7 +184,7 @@ public class CFPSST extends CFPS {
 
                 partitionResult.add(bs);
             } else { //分散搜索
-                IDS solver = new SsIDS(MAX_GEN, partitionDto.getDrivers(), taskList, size, fitnessType, b1, b2, NN, true, 2);
+                IDS solver = new SsIDS(MAX_GEN, partitionDto.getDrivers(), taskList, size, fitnessType, b1, b2, NN, true);
                 SolutionCode solve = solver.solve();
                 sum += solve.getFitness();
                 partitionResult.add(solve);

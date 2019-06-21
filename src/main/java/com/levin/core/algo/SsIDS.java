@@ -48,15 +48,13 @@ public class SsIDS extends IDS {
      */
     private boolean isSplit;
 
-    private int splitType;
 
-    public SsIDS(int MAX_GEN, List<Driver> driverList, List<TransportTask> taskList, int size, String fitnessType, int b1, int b2, int NN, boolean isSplit, int splitType) {
+    public SsIDS(int MAX_GEN, List<Driver> driverList, List<TransportTask> taskList, int size, String fitnessType, int b1, int b2, int NN, boolean isSplit) {
         super(MAX_GEN, driverList, taskList, size, fitnessType);
         this.b1 = b1;
         this.b2 = b2;
         this.NN = NN;
         this.isSplit = isSplit;
-        this.splitType = splitType;
     }
 
     @Override
@@ -116,7 +114,7 @@ public class SsIDS extends IDS {
             }
         }
         if (fitnessType.equalsIgnoreCase("profit"))
-            System.out.println(1 / bestF *100000);
+            System.out.println(1 / bestF * 100000);
         else
             System.out.println(bestF);
     }
