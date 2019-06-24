@@ -1,5 +1,6 @@
 package com.levin.core.draw;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -7,11 +8,28 @@ import java.util.ListIterator;
 
 public class MinimumBoundingPolygon {
 
-    public static LinkedList<Point> findSmallestPolygon(List<Point> ps) {
-        if (null == ps || ps.isEmpty()) {
+    private static List<Point> convert(List<com.levin.entity.Point> points) {
+        List<Point> pointList = new ArrayList<>();
+        for (com.levin.entity.Point point : points) {
+            pointList.add(new Point(point.getLat(), point.getLng()));
+        }
+        return pointList;
+    }
+
+    private static LinkedList<com.levin.entity.Point> convert2(List<Point> points) {
+        LinkedList<com.levin.entity.Point> pointList = new LinkedList<>();
+        for (Point point : points) {
+            pointList.add(new com.levin.entity.Point(point.getX(), point.getY()));
+        }
+        return pointList;
+    }
+
+    public static LinkedList<com.levin.entity.Point> findSmallestPolygon(List<com.levin.entity.Point> ps1) {
+        if (null == ps1 || ps1.isEmpty()) {
             return null;
         }
 
+        List<Point> ps = convert(ps1);
         Point corner = findStartPoint(ps);
         if (null == corner) {
             return null;
@@ -53,7 +71,7 @@ public class MinimumBoundingPolygon {
             corner.founded = true;
         } while (!corner.equals(bound.getFirst())); /* 判断边界是否闭合 */
 
-        return bound;
+        return convert2(bound);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.levin.core.entity.code;
 
+import com.levin.core.entity.fitness.Fitness;
 import com.levin.entity.Gene;
 
 import java.util.ArrayList;
@@ -11,6 +12,10 @@ import java.util.List;
 public class LayerCode extends SolutionCode {
 
     public LayerCode(List<VehicleCode> vehicleCodeList, String fitnessType) {
+        super(vehicleCodeList, fitnessType);
+    }
+
+    public LayerCode(List<VehicleCode> vehicleCodeList, Fitness fitnessType) {
         super(vehicleCodeList, fitnessType);
     }
 

@@ -66,7 +66,7 @@ public abstract class SolutionCode {
     /**
      * 禁忌搜索，寻找最优子结构组成的最优领域
      */
-    public SolutionCode bestNeighbor(int NN) {
+    public SolutionCode bestNeighbor(int NN, int type) {
         Set<VehicleCode> tabuList = new HashSet<>();
         List<VehicleCode> vehicleCodes = new ArrayList<>();
         for (VehicleCode vehicleCode : this.vehicleCodeList) {
@@ -93,7 +93,7 @@ public abstract class SolutionCode {
             }
             vehicleCodes.add(bestV);
         }
-        return new TreeCode(vehicleCodes, fitnessType);
+        return type == 1 ? new TreeCode(vehicleCodes, fitnessType) : new LayerCode(vehicleCodeList, fitnessType);
     }
 
 

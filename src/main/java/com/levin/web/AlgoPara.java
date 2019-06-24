@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class AlgoPara {
-    private int maxGen = 2;
+    private int maxGen = 1;
     private int size = 50;
     private int n = 100;
     private String fitnessType = "distance";

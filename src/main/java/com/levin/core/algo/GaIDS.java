@@ -6,6 +6,7 @@ import com.levin.entity.Gene;
 import com.levin.excel.Driver;
 import com.levin.excel.TransportTask;
 import com.levin.core.entity.code.LayerCodeUtil;
+import com.levin.web.AlgoPara;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.text.DecimalFormat;
@@ -78,6 +79,7 @@ public class GaIDS extends IDS {
         Pi = new double[size];
         this.N = n;
         ts = driverList.size() + taskList.size();
+        super.init();
     }
 
     @Override
@@ -92,8 +94,9 @@ public class GaIDS extends IDS {
         for (LayerCode ch : oldPopulation) {
             if (bestF == 0) {
                 bestF = ch.getFitness();
+                bestS = ch;
             }
-            if (ch.getFitness() > bestF) {
+            if (ch.getFitness() < bestF) {
                 bestS = ch;
                 bestF = ch.getFitness();
                 bestT = t;
@@ -128,7 +131,7 @@ public class GaIDS extends IDS {
      * @param ch 起始染色体
      */
     private void tabu(LayerCode ch) {
-        SolutionCode neighbor = ch.bestNeighbor(1);
+        LayerCode neighbor = (LayerCode) ch.bestNeighbor(1, 0);
         tabuList = new TreeSet<>();
         for (int tt = 0; tt < N; tt++) {
             if (!tabuList.contains(neighbor)) {
@@ -138,7 +141,7 @@ public class GaIDS extends IDS {
                 }
                 tabuList.add((LayerCode) neighbor);
             }
-            neighbor = neighbor.bestNeighbor(1);
+            neighbor = (LayerCode) neighbor.bestNeighbor(1, 0);
         }
         //将最好结果放回种群，加快搜索速度
         LayerCode bestC = tabuList.iterator().next();
@@ -436,5 +439,10 @@ public class GaIDS extends IDS {
             Pc = k3;
         }
         return Pc;
+    }
+
+    public static void main(String[] args) {
+        SolutionCode ga = SolverFactory.solve("ga", new AlgoPara());
+        System.out.println(ga.getFitness());
     }
 }

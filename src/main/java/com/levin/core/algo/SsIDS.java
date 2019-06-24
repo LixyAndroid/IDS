@@ -94,7 +94,7 @@ public class SsIDS extends IDS {
             //禁忌搜索优化（车辆分配方案不变，只优化装载方案）
             List<SolutionCode> refer2 = new ArrayList<>();
             for (SolutionCode sc : referSet) {
-                refer2.add(sc.bestNeighbor(NN));
+                refer2.add(sc.bestNeighbor(NN,1));
             }
             referSet = refer2;
             evaluate();
@@ -149,7 +149,12 @@ public class SsIDS extends IDS {
 
                 }
 
+                if (population.size() > size * size)
+                    break;
+
             }
+            if (population.size() > size * size)
+                break;
         }
     }
 

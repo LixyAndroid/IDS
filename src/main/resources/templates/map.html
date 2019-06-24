@@ -20,21 +20,109 @@
     <title>智能车辆调度系统演示v1.0</title>
 </head>
 <body>
-<!--<div style="margin-top: 10px;height: 100px">
+<div style="width: 20%;float: left;opacity:100%">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>算法参数</legend>
+    </fieldset>
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">算法:</label>
+                <div class="layui-input-inline">
+                    <select name="algo">
+                        <option value="CFPS">CFPS</option>
+                        <option value="CFPSST">CFPSST</option>
+                        <option value="GA">GA</option>
+                        <option value="PSO">PSO</option>
+                        <option value="SS">SS</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">目标函数:</label>
+                <div class="layui-input-inline">
+                    <select name="fitness">
+                        <option value="distance">距离</option>
+                        <option value="cost">成本</option>
+                        <option value="time">时间</option>
+                        <option value="profit">利润</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">迭代次数:</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="maxGen" placeholder="" autocomplete="off" class="layui-input"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">种群规模:</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="size" placeholder="" autocomplete="off" class="layui-input"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">N:</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="n" placeholder="" autocomplete="off" class="layui-input"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">alpha:</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="alpha" placeholder="" autocomplete="off" class="layui-input"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">beta:</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="beta" placeholder="" autocomplete="off" class="layui-input"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">分区因子:</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="gama" placeholder="" autocomplete="off" class="layui-input"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">优质解数目:</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="b1" placeholder="" autocomplete="off" class="layui-input"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">多样性解数:</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="b2" placeholder="" autocomplete="off" class="layui-input"/>
+                </div>
+            </div>
+            <!--<div class="layui-inline">
+                <div class="layui-input-inline">
+                    <button class="layui-btn layui-btn-fluid" lay-submit="" lay-filter="para">提交</button>
+                </div>
+            </div>-->
+            <button class="layui-btn layui-btn-fluid" lay-submit="" lay-filter="para"
+                    style="width: 80%;margin-left: 10%;margin-top: 30px">提交
+            </button>
 
-</div>-->
+        </div>
+    </form>
+    <button class="layui-btn layui-btn-fluid" style="width: 80%;margin-left: 10%;margin-top: 30px"
+            onclick="clustering()">聚类
+    </button>
+</div>
 
 <!--<hr class="layui-bg-orange">-->
-<div id="allmap" style="margin-top: 0"></div>
+<div id="allmap" style="margin-top: 0;width: 80%;float: right"></div>
 </body>
 </html>
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script type="text/javascript">
     // 百度地图API功能
     var map = new BMap.Map("allmap");
-    var point = new BMap.Point(116.400244, 39.92556);
-    var center = new BMap.Point(105, 34.27);
-    map.centerAndZoom(center, 6);
+    var center = new BMap.Point(105, 32);
+    map.centerAndZoom(center, 5);
     map.enableScrollWheelZoom(true);
 
     /*var marker = new BMap.Marker(point);  // 创建标注
@@ -58,40 +146,184 @@
                 size: BMAP_POINT_SIZE_NORMAL,
                 shape: BMAP_POINT_SHAPE_STAR,
                 color: 'green'
-            }
+            };
             var pointCollection = new BMap.PointCollection(points, options);
             pointCollection.addEventListener('click', getAttr);
             map.addOverlay(pointCollection);  // 添加Overlay
         });
 
         $.getJSON("/map/task", {}, function (data) {
-            let points = [];  // 添加海量点数据
+            let points1 = [];  // 添加海量点数据
+            let points2 = [];  // 添加海量点数据
 
             for (let i = 0; i < data.length; i++) {
                 let task = data[i];
                 let start = new BMap.Point(task.lng1, task.lat1);
                 let end = new BMap.Point(task.lng2, task.lat2);
-                points.push(start);
-                points.push(end);
+                points1.push(start);
+                points2.push(end);
                 /*    let marker = new BMap.Marker(start);  // 创建标注
                     let marker2 = new BMap.Marker(end);  // 创建标注
                     map.addOverlay(marker);              // 将标注添加到地图中
                     map.addOverlay(marker2);              // 将标注添加到地图中
                     marker.addEventListener("click", getAttr);*/
-
-                var options = {
-                    //BMAP_POINT_SHAPE_STAR
-                    size: BMAP_POINT_SIZE_SMALL,
-                    shape: BMAP_POINT_SHAPE_SQUARE,
-                    color: 'red'
-                }
-                var pointCollection = new BMap.PointCollection(points, options);
-                pointCollection.addEventListener('click', getAttr);
-                map.addOverlay(pointCollection);  // 添加Overlay
                 var polyline = new BMap.Polyline([start, end
                 ], {strokeColor: "blue", strokeWeight: 1, strokeOpacity: 0.5});   //创建折线
                 map.addOverlay(polyline);
             }
+
+            var options1 = {
+                //BMAP_POINT_SHAPE_STAR
+                size: BMAP_POINT_SIZE_SMALL,
+                shape: BMAP_POINT_SHAPE_RHOMBUS,
+                color: 'black'
+            };
+            var options2 = {
+                //BMAP_POINT_SHAPE_STAR
+                size: BMAP_POINT_SIZE_SMALL,
+                shape: BMAP_POINT_SHAPE_SQUARE,
+                color: 'red'
+            };
+            var pointCollection1 = new BMap.PointCollection(points1, options2);
+            var pointCollection2 = new BMap.PointCollection(points2, options1);
+            pointCollection1.addEventListener('click', getAttr);
+            pointCollection2.addEventListener('click', getAttr);
+            map.addOverlay(pointCollection1);  // 添加Overlay
+            map.addOverlay(pointCollection2);  // 添加Overlay
         })
-    })
+    });
+
+    function getRandomColor() {
+        var colorValue = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 'b', 'c', 'd', 'e', 'f'];
+        var s = "#";
+        for (var i = 0; i < 6; i++) {
+            s += colorValue[Math.floor(Math.random() * 16)];
+        }
+
+        return s;
+    }
+
+    function clustering() {
+        //map.clearOverlays();
+        $.getJSON("/map/clustering", {}, function (data) {
+            for (let i = 0; i < data.length; i++) {
+                let area = data[i];
+                var partition = [];
+                for (let j = 0; j < area.length; j++) {
+                    let point = area[j];
+                    partition.push(new BMap.Point(point.lng, point.lat));
+                }
+                var color = getRandomColor();
+                var polygon = new BMap.Polygon(
+                    partition
+                    , {strokeColor: color, fillColor: color, strokeWeight: 2, strokeOpacity: 0.3});  //创建多边形
+                map.addOverlay(polygon);   //增加多边形
+            }
+        })
+    }
+
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        form.render();
+        //监听提交
+        form.on('submit(para)', function (data) {
+            var field = data.field;
+            var para = {};
+            para.maxGen = field.maxGen;
+            para.n = field.n;
+            para.size = field.size;
+            para.fitnessType = field.fitness;
+            para.alpha = field.alpha;
+            para.beta = field.beta;
+            para.gama = field.gama;
+            para.b1 = field.b1;
+            para.b2 = field.b2;
+
+            $.post("/map/data", {algo: field.algo, para: para}, function (data) {
+                if (data) {
+                    map.clearOverlays();
+                    var routeList = data.routeList;
+                    var fitness = data.fitness;
+                    var time = data.time;
+
+                    var driverPoints = [];
+                    var startPoints = [];
+                    var endPoints = [];
+                    for (let i = 0; i < routeList.length; i++) {
+                        var points = [];
+                        var route = routeList[i];
+                        var driver = route.driver;
+                        points.push(new BMap.Point(driver.lng, driver.lat))
+                        driverPoints.push(new BMap.Point(driver.lng, driver.lat))
+                        var nodeList = route.nodeList;
+                        for (let j = 0; j < nodeList.length; j++) {
+                            var node = nodeList[j];
+                            if (node.type === 1) {
+                                startPoints.push(new BMap.Point(node.task.lng1, node.task.lat1));
+                                points.push(new BMap.Point(node.task.lng1, node.task.lat1));
+                            } else {
+                                endPoints.push(new BMap.Point(node.task.lng2, node.task.lat2));
+                                points.push(new BMap.Point(node.task.lng2, node.task.lat2));
+                            }
+                        }
+
+                        var polyline = new BMap.Polyline(points, {
+                            strokeColor: getRandomColor(),
+                            strokeWeight: 1,
+                            strokeOpacity: 0.5
+                        });   //创建折线
+                        map.addOverlay(polyline);
+                    }
+                    var options1 = {
+                        size: BMAP_POINT_SIZE_SMALL,
+                        shape: BMAP_POINT_SHAPE_RHOMBUS,
+                        color: 'black'
+                    };
+                    var options2 = {
+                        size: BMAP_POINT_SIZE_SMALL,
+                        shape: BMAP_POINT_SHAPE_SQUARE,
+                        color: 'red'
+                    };
+                    var pointCollection1 = new BMap.PointCollection(startPoints, options2);
+                    var pointCollection2 = new BMap.PointCollection(endPoints, options1);
+                    pointCollection1.addEventListener('click', getAttr);
+                    pointCollection2.addEventListener('click', getAttr);
+                    map.addOverlay(pointCollection1);  // 添加Overlay
+                    map.addOverlay(pointCollection2);  // 添加Overlay
+
+                    var options = {
+                        size: BMAP_POINT_SIZE_NORMAL,
+                        shape: BMAP_POINT_SHAPE_STAR,
+                        color: 'green'
+                    };
+                    var pointCollection = new BMap.PointCollection(driverPoints, options);
+                    pointCollection.addEventListener('click', getAttr);
+                    map.addOverlay(pointCollection);  // 添加Overlay
+                    var unit;
+                    if (field.fitness === 'distance') {
+                        unit = '公里';
+                    } else if (field.fitness === 'time') {
+                        unit = '小时';
+                    } else {
+                        unit = '元';
+                    }
+
+                    var content = '运行时间' + time.toFixed(2) + '秒,目标函数' + fitness.toFixed(2) + unit;
+                    layer.open({
+                        title: '运行结果'
+                        , content: content
+                        , offset: 'rt'
+                    });
+                } else {
+                    layer.alert('运行出错', {
+                        title: '信息'
+                    });
+                }
+            });
+
+
+            return false;
+        });
+    });
 </script>

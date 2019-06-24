@@ -102,7 +102,7 @@ public class CFPS extends IDS implements Clustring<TransportTask> {
         SolutionCode solution = new TreeCode(vehicleCodeList, fitnessType);
 
         //tabu 优化每辆车的行车路线
-        SolutionCode bestSolution = solution.bestNeighbor(NN);
+        SolutionCode bestSolution = solution.bestNeighbor(NN,1);
         this.bestS = bestSolution;
         this.bestF = bestSolution.calFitness();
         return bestSolution;
@@ -311,6 +311,8 @@ public class CFPS extends IDS implements Clustring<TransportTask> {
         IDS solver = new CFPS(0, DataLab.driverList(path + "vehicle.xls"),
                 DataLab.taskList(path + "task.xls"), 1, "distance", 50, 200, 100);
         SolutionCode solve = solver.solve();
+        System.out.println(solve.getFitness());
+        System.out.println(solve.print());
         System.out.println(System.currentTimeMillis()-l);
 
     }

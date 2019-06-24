@@ -57,20 +57,20 @@ public class DrawPath extends JPanel {
             List<Driver> driverList = partitionDto.getDrivers();
             List<TransportTask> taskList = partitionDto.getTaskList();
             //System.out.println(i++ + "," + driverList.size() + " , " + taskList.size());
-            List<com.levin.core.draw.Point> all = new ArrayList<>();
+            List<Point> all = new ArrayList<>();
             for (Driver driver : driverList) {
                 drawVehicle(g, new Point(driver.getLat(), driver.getLng()));
-                all.add(new com.levin.core.draw.Point(driver.getLat(), driver.getLng()));
+                all.add(new Point(driver.getLat(), driver.getLng()));
             }
 
             for (TransportTask task : taskList) {
                 //if (partitionDto.getTaskList().size() > 4)
                 drawOrder(g, new Point(task.getLat1(), task.getLng1()), new Point(task.getLat2(), task.getLng2()));
-                all.add(new com.levin.core.draw.Point(task.getLat1(), task.getLng1()));
-                all.add(new com.levin.core.draw.Point(task.getLat2(), task.getLng2()));
+                all.add(new Point(task.getLat1(), task.getLng1()));
+                all.add(new Point(task.getLat2(), task.getLng2()));
             }
 
-            LinkedList<com.levin.core.draw.Point> smallestPolygon = MinimumBoundingPolygon.findSmallestPolygon(all);
+            LinkedList<Point> smallestPolygon = MinimumBoundingPolygon.findSmallestPolygon(all);
             if (smallestPolygon != null) {
                 drawBound(g, smallestPolygon);
             }
@@ -140,7 +140,7 @@ public class DrawPath extends JPanel {
         return new Point((lat / 2 - 800) * 2.5 + 250, (lng / 2 - 500) * 2.5 + 50);
     }
 
-    private void drawBound(Graphics g, LinkedList<com.levin.core.draw.Point> points) {
+    private void drawBound(Graphics g, LinkedList<Point> points) {
         Graphics2D g2d = (Graphics2D) g.create();
         points.add(points.get(0));
 
@@ -164,8 +164,8 @@ public class DrawPath extends JPanel {
         int[] yPoints = new int[nPoints];
 
         for (int i = 0; i < nPoints; i++) {
-            com.levin.core.draw.Point point = points.get(i);
-            Point trans = trans(new Point(point.getX(), point.getY()));
+            Point point = points.get(i);
+            Point trans = trans(new Point(point.getLat(), point.getLng()));
             xPoints[i] = (int) trans.getLat();
             yPoints[i] = (int) trans.getLng();
         }
