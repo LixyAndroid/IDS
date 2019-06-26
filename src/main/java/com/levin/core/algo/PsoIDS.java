@@ -42,6 +42,7 @@ public class PsoIDS extends IDS {
      */
     private float alpha = 0.9f;
 
+
     public PsoIDS(int MAX_GEN, List<Driver> driverList, List<TransportTask> taskList, int size, String fitnessType) {
         super(MAX_GEN, driverList, taskList, size, fitnessType);
     }
@@ -61,7 +62,8 @@ public class PsoIDS extends IDS {
      */
     public void init() {
         super.init();
-        size = driverList.size() + taskList.size() * 2;
+        //size = driverList.size() + taskList.size() * 2;
+        size = 10;
     }
 
 
@@ -69,6 +71,8 @@ public class PsoIDS extends IDS {
      * 初始化种群
      */
     public void initGroup() {
+        init();
+        population = new ArrayList<>();
         //产生备选集合
         for (int i = 0; i < size; i++) {
             for (int k = 0; k < size; k++) {
@@ -79,13 +83,18 @@ public class PsoIDS extends IDS {
     }
 
     private void clustring() {
+
         //聚类生成初始解集
         List<LayerCode> layerCodes = new ArrayList<>();
-        for (SolutionCode sc : mUnits) {
+        /*
+        for (int i = 0; i < 50 ; i++) {
+            layerCodes.add((LayerCode) population.get(i));
+        }*/
+        for (SolutionCode sc : population) {
             layerCodes.add((LayerCode) sc);
         }
 
-        ParticleClustering particleClustering = new ParticleClustering(layerCodes, size, 10);
+        ParticleClustering particleClustering = new ParticleClustering(layerCodes, size, 5);
         particleClustering.clustering();
         mUnits = particleClustering.getClusteringCenterT();
     }
@@ -133,7 +142,7 @@ public class PsoIDS extends IDS {
         // 进化
         evolution();
 
-        return bestS;
+        return Pgd;
 
     }
 
@@ -144,12 +153,14 @@ public class PsoIDS extends IDS {
      */
     public boolean isconvergence() {
         int s = Pgds.size();
-        if (s < MAX_GEN / 100) {
+        if (s <= MAX_GEN / 100) {
             return false;
         }
 
         for (int i = 1; i < 10; i++) {
             for (int j = 1; j < i; j++) {
+                System.out.println(s-i);
+                System.out.println(s-j);
                 if (Pgds.get(s - i).getFitness() != Pgds.get(s - j).getFitness()) {
                     return false;
                 }

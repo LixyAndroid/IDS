@@ -10,10 +10,7 @@ import com.levin.web.AlgoPara;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * 遗传算法
@@ -43,7 +40,7 @@ public class GaIDS extends IDS {
     /**
      * 禁忌表
      */
-    private Set<LayerCode> tabuList = new TreeSet<>();
+    private Set<LayerCode> tabuList = new HashSet<>();
 
     /**
      * 当前代数
@@ -132,7 +129,7 @@ public class GaIDS extends IDS {
      */
     private void tabu(LayerCode ch) {
         LayerCode neighbor = (LayerCode) ch.bestNeighbor(1, 0);
-        tabuList = new TreeSet<>();
+        tabuList = new HashSet<>();
         for (int tt = 0; tt < N; tt++) {
             if (!tabuList.contains(neighbor)) {
                 if (neighbor.getFitness() > bestS.getFitness()) {
@@ -283,15 +280,18 @@ public class GaIDS extends IDS {
         }
 
         //增加送货码
-        Gene[] newPath = new Gene[size];
-        int p = 0;
+        ArrayList<Gene> newPathList = new ArrayList<Gene>();
+        //Gene[] newPath = new Gene[size];
+        //int p = 0;
         for (Gene g : temp) {
-            newPath[p++] = g;
+            //newPath[p++] = g;
+            newPathList.add(g);
             if (g.getType() == 2) {
-                newPath[p++] = new Gene(3, g.getCode());
+                //newPath[p++] = new Gene(3, g.getCode());
+                newPathList.add(new Gene(3,g.getCode()));
             }
         }
-
+        Gene[] newPath = newPathList.toArray(new Gene[newPathList.size()]);
         return LayerCodeUtil.toCode(newPath, fitnessType);
     }
 
