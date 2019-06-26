@@ -309,7 +309,7 @@ public class CFPS extends IDS implements Clustring<TransportTask> {
         long l = System.currentTimeMillis();
         String path = FileUtils.getAppPath() + "/src/main/resources/";
         IDS solver = new CFPS(0, DataLab.driverList(path + "vehicle.xls"),
-                DataLab.taskList(path + "task.xls"), 1, "distance", 50, 200, 100);
+                DataLab.taskList(path + "task.xls",-1), 1, "distance", 50, 200, 100);
         SolutionCode solve = solver.solve();
         System.out.println(solve.getFitness());
         System.out.println(solve.print());

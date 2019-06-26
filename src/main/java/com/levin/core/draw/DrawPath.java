@@ -44,7 +44,7 @@ public class DrawPath extends JPanel {
 
         //聚类分区
         String path = FileUtils.getAppPath() + "/src/main/resources/";
-        CFPSST cfpsst = new CFPSST(0, DataLab.driverList(path + "vehicle.xls"), DataLab.taskList(path + "task.xls"), 1, "distance", 50, 200, 100, 100, 10, 30);
+        CFPSST cfpsst = new CFPSST(0, DataLab.driverList(path + "vehicle.xls"), DataLab.taskList(path + "task.xls",-1), 1, "distance", 50, 200, 100, 100, 10, 30);
         List<PartitionDto> partition = cfpsst.partition2();
 
         /*int t = 19;

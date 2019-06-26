@@ -16,7 +16,7 @@ public class Main {
             for (int b = 0; b <= 500; b += 10) {
                 StringBuilder str = new StringBuilder(a + "\t" + b + "\t");
                 for (int i = 0; i < 10; i++) {
-                    IDS solver = new CFPS(0, DataLab.driverList(path + "vehicle.xls"), DataLab.taskList(path + "task.xls"), 1, "distance", a, b, 100);
+                    IDS solver = new CFPS(0, DataLab.driverList(path + "vehicle.xls"), DataLab.taskList(path + "task.xls",-1), 1, "distance", a, b, 100);
                     SolutionCode solve = solver.solve();
                     str.append(solve.getFitness()).append("\t");
                     DataLab.clear();

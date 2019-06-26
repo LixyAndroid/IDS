@@ -98,7 +98,7 @@ public class BmapUtils {
 
     public static void main(String[] args) {
         String path = FileUtils.getAppPath() + "/src/main/resources/";
-        List<TransportTask> taskList = DataLab.taskList(path + "task.xls");
+        List<TransportTask> taskList = DataLab.taskList(path + "task.xls",-1);
         for (TransportTask tt : taskList) {
             System.out.println(tt.getAmount());
         }

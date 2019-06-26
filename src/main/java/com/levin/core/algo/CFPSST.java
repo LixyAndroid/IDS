@@ -267,7 +267,7 @@ public class CFPSST extends CFPS {
                                     StringBuilder str = new StringBuilder(n + "\t" + a + "\t" + b + "\t" + nn + "\t" + b1 + "\t" + b2 + "\t");
                                     for (int i = 0; i < 10; i++) {
                                         IDS solver = new CFPSST(5, DataLab.driverList(path + "vehicle.xls"),
-                                                DataLab.taskList(path + "task.xls"), n, "distance", a, b, 100, nn, b1, b2);
+                                                DataLab.taskList(path + "task.xls",-1), n, "distance", a, b, 100, nn, b1, b2);
                                         SolutionCode solve = solver.solve();
                                         str.append(solve.getFitness()).append("\t");
                                         DataLab.clear();
@@ -289,7 +289,7 @@ public class CFPSST extends CFPS {
     public static void test() {
         String path = FileUtils.getAppPath() + "/src/main/resources/";
         IDS solver = new CFPSST(3, DataLab.driverList(path + "vehicle.xls"),
-                DataLab.taskList(path + "task.xls"), 100, "distance", 50, 200, 50, 1000, 30, 30);
+                DataLab.taskList(path + "task.xls",-1), 100, "distance", 50, 200, 50, 1000, 30, 30);
         SolutionCode solve = solver.solve();
         System.out.println(solve.getFitness());
         System.out.println(solve.print());
