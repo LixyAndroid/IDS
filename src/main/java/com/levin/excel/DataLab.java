@@ -49,9 +49,9 @@ public class DataLab {
      * @param path 文件路径
      * @return List<TransportTask>
      */
-    public static List<TransportTask> taskList(String path) {
+    public static List<TransportTask> taskList(String path, int n) {
         if (transportTaskList != null && transportTaskList.size() > 0) {
-            return transportTaskList;
+            return chooseTask(n);
         }
 
         File file = new File(path);
@@ -59,8 +59,7 @@ public class DataLab {
             return new ArrayList<>();
         }
         transportTaskList = ExcelImportUtil.importExcel(file, TransportTask.class, new ImportParams());
-        //transportTaskList = transportTaskList.subList(90, 120);
-        return transportTaskList;
+        return chooseTask(n);
     }
 
     /**
@@ -228,5 +227,17 @@ public class DataLab {
             }
             return sum / driverList.size();
         }
+    }
+
+    private static List<TransportTask> chooseTask(int n) {
+        if (n <= 0)
+            return transportTaskList;
+        int size = transportTaskList.size();
+        int step = size / n;
+        List<TransportTask> result = new ArrayList<>();
+        for (int i = 0; i < size; i += step) {
+            result.add(transportTaskList.get(i));
+        }
+        return result;
     }
 }

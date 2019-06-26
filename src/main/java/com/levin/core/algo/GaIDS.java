@@ -442,7 +442,7 @@ public class GaIDS extends IDS {
     }
 
     public static void main(String[] args) {
-        SolutionCode ga = SolverFactory.solve("ga", new AlgoPara());
+        SolutionCode ga = SolverFactory.solve("ga", 30, new AlgoPara());
         System.out.println(ga.getFitness());
     }
 }

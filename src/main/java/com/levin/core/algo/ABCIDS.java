@@ -276,7 +276,7 @@ public class ABCIDS extends IDS {
 
     public static void main(String[] args) {
         String path = FileUtils.getAppPath() + "/src/main/resources/";
-        ABCIDS bee = new ABCIDS(100, DataLab.driverList(path + "vehicle.xls"), DataLab.taskList(path + "task.xls"), "distance");
+        ABCIDS bee = new ABCIDS(100, DataLab.driverList(path + "vehicle.xls"), DataLab.taskList(path + "task.xls",-1), "distance");
         SolutionCode solve = bee.solve();
         System.out.println(solve.print());
     }

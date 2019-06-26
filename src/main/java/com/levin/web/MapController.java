@@ -15,7 +15,6 @@ import com.levin.util.FileUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ public class MapController {
     @ResponseBody
     public Result route(String algo, AlgoPara para) {
         long start = System.currentTimeMillis();
-        SolutionCode solve = SolverFactory.solve(algo, para);
+        SolutionCode solve = SolverFactory.solve(algo, 30, para);
         DataLab.clear();
         return process(solve, start);
     }
@@ -68,14 +67,14 @@ public class MapController {
     @RequestMapping("/task")
     @ResponseBody
     public List<TransportTask> task() {
-        return DataLab.taskList(FileUtils.getAppPath() + "/src/main/resources/task.xls");
+        return DataLab.taskList(FileUtils.getAppPath() + "/src/main/resources/task.xls", 30);
     }
 
     @RequestMapping("/clustering")
     @ResponseBody
     public List<List<Point>> clustering() {
         String path = FileUtils.getAppPath() + "/src/main/resources/";
-        CFPSST cfpsst = new CFPSST(0, DataLab.driverList(path + "vehicle.xls"), DataLab.taskList(path + "task.xls"), 1, "distance", 50, 200, 100, 100, 10, 30);
+        CFPSST cfpsst = new CFPSST(0, DataLab.driverList(path + "vehicle.xls"), DataLab.taskList(path + "task.xls",30), 1, "distance", 50, 200, 100, 100, 10, 30);
         List<PartitionDto> partition = cfpsst.partition2();
 
         List<List<Point>> result = new ArrayList<>();
