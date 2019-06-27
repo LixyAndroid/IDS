@@ -17,6 +17,7 @@ import static java.util.stream.Collectors.toCollection;
  */
 public class SsIDS extends IDS {
 
+    private static DecimalFormat decimalFormat = new DecimalFormat("#.00");
 
     /**
      * 参考集
@@ -35,6 +36,7 @@ public class SsIDS extends IDS {
 
     /**
      * 配车因子（直接影响使用车辆数目）
+     * 根据车辆数目和订单数目的比值，决定分配给每辆车的订单的均值
      */
     private double df;
 
@@ -59,8 +61,11 @@ public class SsIDS extends IDS {
 
     @Override
     protected void init() {
+        //父类初始化方法
         super.init();
+        //计算配车因子
         df = (double) taskList.size() / driverList.size();
+        //种群初始化
         populationInit();
     }
 
@@ -84,17 +89,18 @@ public class SsIDS extends IDS {
 
     @Override
     public SolutionCode solve() {
-        //产生初始解集
+        //初始化
         init();
         for (int i = 0; i < MAX_GEN; i++) {
             //从初始解集中产生参考集 B = B1(多样性解)+B2（优质解）
             genRefer();
+            //解的评价
             evaluate();
 
             //禁忌搜索优化（车辆分配方案不变，只优化装载方案）
             List<SolutionCode> refer2 = new ArrayList<>();
             for (SolutionCode sc : referSet) {
-                refer2.add(sc.bestNeighbor(NN,1));
+                refer2.add(sc.bestNeighbor(NN, 1));
             }
             referSet = refer2;
             evaluate();
@@ -108,53 +114,43 @@ public class SsIDS extends IDS {
     @Override
     protected void evaluate() {
         for (SolutionCode sc : referSet) {
-            if (sc.getFitness() < bestF && sc.getFitness() > 0) {
+            if (sc.getFitness() < bestF && sc.getFitness() > 0) { //此处默认目标函数为最小,如果是最大化问题可使用倒数
                 bestF = sc.getFitness();
                 bestS = sc;
             }
         }
-        if (fitnessType.equalsIgnoreCase("profit"))
-            System.out.println(1 / bestF * 100000);
-        else
-            System.out.println(bestF);
     }
 
     /**
      * 子集产生与重组
      */
     private void segReg() {
+        //清空备选解集
         population = new ArrayList<>();
-        population.add(bestS);  //精英保留
+        //精英保留
+        population.add(bestS);
 
         for (int i = 0; i < referSet.size(); i++) {
             for (int j = 0; j < i; j++) {
-                //System.out.println(i + "---" + j);
+                //选取两个解组成解集对，生成两个新的解
                 List<SolutionCode> solutionCodes = reOrg(referSet.get(i), referSet.get(j));
 
                 if (solutionCodes.size() > 0) {
                     for (SolutionCode solutionCode : solutionCodes) {
                         if (solutionCode == null) {
-                            System.out.println("---");
                             continue;
                         }
-
+                        //将生成的新解加入到备选解集中
                         if (solutionCode.getFitness() > 0) {
                             population.add(solutionCode);
                         } else {
+                            //对于不合法(超载)的解进行修复
                             SolutionCode sc = solutionCode.repair();
-                            //System.out.println(sc.print());
                             population.add(sc);
                         }
                     }
-
                 }
-
-                if (population.size() > size * size)
-                    break;
-
             }
-            if (population.size() > size * size)
-                break;
         }
     }
 
@@ -192,6 +188,7 @@ public class SsIDS extends IDS {
                         toCollection(() -> new TreeSet<>(comparingDouble(SolutionCode::getFitness))), ArrayList::new)
         );
 
+        //如果备选解集的数量少于参考集大小，直接将备选集作为参考集
         if (population.size() <= (b1 + b2)) {
             referSet = population;
             return;
@@ -202,6 +199,7 @@ public class SsIDS extends IDS {
 
         referSet.addAll(solutionCodes);
 
+        //按多样性进行排序
         List<SolutionCode> Np_B1 = population.subList(b1, population.size());
         Np_B1.sort((o1, o2) -> {
             if (o1.getDd() == o2.getDd())
@@ -227,12 +225,10 @@ public class SsIDS extends IDS {
         Set<String> sqs1 = new HashSet<>(); //编码1相邻序列对集合
         Set<String> sqs2 = new HashSet<>(); //编码2相邻序列对集合
 
-
         for (int i = 0; i < cn; i++) {
             VehicleCode vc1 = s1.vehicleCodeList.get(i);
             VehicleCode vc2 = s2.vehicleCodeList.get(i);
             c2u += vc1.getValue();
-
             if (vc1.getOrderCodeList() != null && vc2.getOrderCodeList() != null) {
                 for (OrderCode oc : vc1.getOrderCodeList()) {
                     if (oc.getType() == 1 && vc2.getOrderCodeList().contains(oc)) {
@@ -240,11 +236,8 @@ public class SsIDS extends IDS {
                     }
                 }
             }
-
             sqs(sqs1, vc1);
-
             sqs(sqs2, vc2);
-
         }
 
         int sqn = 0;  //相同相邻序列对数目
@@ -255,6 +248,7 @@ public class SsIDS extends IDS {
         }
 
         double x = 1 - (0.5 * sco / on + 0.5 * sqn / (2 * on - c2u));
+
         if (x <= 0) {
             x = 0.01;
         }
@@ -266,7 +260,7 @@ public class SsIDS extends IDS {
             return 0;
         }
 
-        return Double.parseDouble(decimalFormat.format(-Math.log(1 / x - 1)));
+        return Double.parseDouble(decimalFormat.format(-Math.log(x / (2 - x))));
     }
 
     private void sqs(Set<String> sqs2, VehicleCode vc2) {
@@ -278,8 +272,6 @@ public class SsIDS extends IDS {
             }
         }
     }
-
-    private static DecimalFormat decimalFormat = new DecimalFormat("#.00");
 
     /**
      * 子集产生与重组
@@ -368,10 +360,6 @@ public class SsIDS extends IDS {
 
             for (List<OrderCode> ocs : remain) {
                 int nextInt = random.nextInt(n - 2 > 0 ? n - 2 : 1);
-
-                //while (!(vehicleCodeList.get(nextInt) == null || vehicleCodeList.get(nextInt).getOrderCodeList() == null || vehicleCodeList.get(nextInt).getOrderCodeList().size() == 0)) {
-                //nextInt = random.nextInt(n - 2 > 0 ? n - 2 : 1);
-                //}
                 List<OrderCode> insert = new ArrayList<>();
                 for (OrderCode oc : ocs) {
                     insert.add(oc);
@@ -385,12 +373,7 @@ public class SsIDS extends IDS {
                 } else
                     vehicleCodeList.set(nextInt, new VehicleCode(vehicleCodeList.get(nextInt).getDriver(), 1, insert));
             }
-
-
         }
-
         return new TreeCode(vehicleCodeList, fitnessType);
     }
-
-
 }

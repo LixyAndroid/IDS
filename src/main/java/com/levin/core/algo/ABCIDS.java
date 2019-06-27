@@ -132,7 +132,6 @@ public class ABCIDS extends IDS {
         //解评价
         evaluate();
         for (int t = 0; t < max_gen; t++) {
-            System.out.println(t + ":\t" + (bestF - 100000));
             sendEmployedBees();  //引领蜂阶段
             calculateProbabilities();
             sendOnlookerBees();  //跟随蜂阶段

@@ -69,7 +69,6 @@ public class DataLab {
         if (driverList == null || transportTaskList == null || distance != null && distance.length > 0) {
             return distance;
         }
-
         List<Point> pointList = new ArrayList<>();
         int p = 0;
         map = new HashMap<>();
@@ -237,6 +236,16 @@ public class DataLab {
         List<TransportTask> result = new ArrayList<>();
         for (int i = 0; i < size; i += step) {
             result.add(transportTaskList.get(i));
+        }
+
+        if (result.size() > n) {
+            result = result.subList(0, n);
+        }
+        if (result.size() < n) {
+            int remain = n - result.size();
+            for (int j = 1; j < remain * step; j += step) {
+                result.add(transportTaskList.get(j));
+            }
         }
         return result;
     }

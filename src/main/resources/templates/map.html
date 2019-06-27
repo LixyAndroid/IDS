@@ -35,8 +35,15 @@
                         <option value="GA">GA</option>
                         <option value="PSO">PSO</option>
                         <option value="SS">SS</option>
-                        <option value="ABCIDS">ABCIDS</option>
+                        <option value="ABC">ABC</option>
                     </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">订单数目:</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="orderNum" id="orderNum" placeholder="" autocomplete="off"
+                           class="layui-input"/>
                 </div>
             </div>
             <div class="layui-inline">
@@ -123,12 +130,12 @@
 
     //鼠标悬浮
     function mOver(e) {
-        
+
     }
 
     //鼠标移开
     function mOut(e) {
-        
+
     }
 
     //松开鼠标
@@ -228,7 +235,8 @@
 
     function clustering() {
         //map.clearOverlays();
-        $.getJSON("/map/clustering", {}, function (data) {
+        var n = $("#orderNum").val();
+        $.getJSON("/map/clustering", {n: n}, function (data) {
             for (let i = 0; i < data.length; i++) {
                 let area = data[i];
                 var partition = [];
@@ -253,6 +261,8 @@
         form.on('submit(para)', function (data) {
             var field = data.field;
             var para = {};
+            para.algo = field.algo;
+            para.orderNum = field.orderNum;
             para.maxGen = field.maxGen;
             para.n = field.n;
             para.size = field.size;
@@ -263,7 +273,7 @@
             para.b1 = field.b1;
             para.b2 = field.b2;
 
-            $.post("/map/data", {algo: field.algo, para: para}, function (data) {
+            $.post("/map/data", para, function (data) {
                 if (data) {
                     map.clearOverlays();
                     var routeList = data.routeList;
@@ -277,8 +287,8 @@
                         var points = [];
                         var route = routeList[i];
                         var driver = route.driver;
-                        points.push(new BMap.Point(driver.lng, driver.lat))
-                        driverPoints.push(new BMap.Point(driver.lng, driver.lat))
+                        points.push(new BMap.Point(driver.lng, driver.lat));
+                        driverPoints.push(new BMap.Point(driver.lng, driver.lat));
                         var nodeList = route.nodeList;
                         for (let j = 0; j < nodeList.length; j++) {
                             var node = nodeList[j];

@@ -5,9 +5,21 @@ import com.levin.excel.DataLab;
 import com.levin.util.FileUtils;
 import com.levin.web.AlgoPara;
 
+/**
+ * 求解算法工厂
+ */
 public class SolverFactory {
+    //司机和订单Excel文件路径
     private static final String path = FileUtils.getAppPath() + "/src/main/resources/";
 
+    /**
+     * 根据算法名称选择相应的算法进行求解
+     *
+     * @param algo 算法名称
+     * @param n    订单数目
+     * @param para 算法参数
+     * @return
+     */
     public static SolutionCode solve(String algo, int n, AlgoPara para) {
         return selectAlgo(algo, n, para).solve();
     }

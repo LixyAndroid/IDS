@@ -26,7 +26,6 @@ public class PsoIDS extends IDS {
 
     private ArrayList<ArrayList<SO>> listV = new ArrayList<>();    //自身交换序列，即惯性因子
 
-
     /**
      * 初始温度
      */
@@ -62,7 +61,6 @@ public class PsoIDS extends IDS {
      */
     public void init() {
         super.init();
-        //size = driverList.size() + taskList.size() * 2;
         size = 10;
     }
 
@@ -70,7 +68,7 @@ public class PsoIDS extends IDS {
     /**
      * 初始化种群
      */
-    public void initGroup() {
+    private void initGroup() {
         init();
         population = new ArrayList<>();
         //产生备选集合
@@ -82,20 +80,16 @@ public class PsoIDS extends IDS {
         clustring();
     }
 
+    //聚类生成初始解集
     private void clustring() {
-
-        //聚类生成初始解集
         List<LayerCode> layerCodes = new ArrayList<>();
-        /*
-        for (int i = 0; i < 50 ; i++) {
-            layerCodes.add((LayerCode) population.get(i));
-        }*/
         for (SolutionCode sc : population) {
             layerCodes.add((LayerCode) sc);
         }
 
         ParticleClustering particleClustering = new ParticleClustering(layerCodes, size, 5);
         particleClustering.clustering();
+        //使用聚类中心作为初始解集
         mUnits = particleClustering.getClusteringCenterT();
     }
 
@@ -114,7 +108,6 @@ public class PsoIDS extends IDS {
                 while (x == y) {
                     y = random.nextInt(size - 1) % (size);
                 }
-
                 //x不等于y
                 SO so = new SO(x, y);
                 list.add(so);
@@ -148,29 +141,28 @@ public class PsoIDS extends IDS {
 
     /**
      * 判断是否收敛
-     *
-     * @return
-     */
-    public boolean isconvergence() {
+     **/
+    private boolean isconvergence() {
         int s = Pgds.size();
-        if (s <= MAX_GEN / 100) {
+        if (s <= MAX_GEN / 100.0) {
             return false;
         }
 
+        //判断最后10次迭代得到的数据是否全部一致，如果全一致则认为收敛
         for (int i = 1; i < 10; i++) {
             for (int j = 1; j < i; j++) {
-                System.out.println(s-i);
-                System.out.println(s-j);
                 if (Pgds.get(s - i).getFitness() != Pgds.get(s - j).getFitness()) {
                     return false;
                 }
             }
         }
-
         return true;
     }
 
-    public void mutation() {
+    /**
+     * 突变
+     */
+    private void mutation() {
         double ratios = 0;
         while (ratios == 0 || ratios > 0.5) {
             LayerCode layerCode = LayerCodeUtil.genCode(driverList, taskList, fitnessType);
