@@ -61,7 +61,7 @@ public abstract class IDS {
 
     }
 
-    public IDS(int MAX_GEN, List<Driver> driverList, List<TransportTask> taskList,int size,String fitnessType) {
+    public IDS(int MAX_GEN, List<Driver> driverList, List<TransportTask> taskList, int size, String fitnessType) {
         this.MAX_GEN = MAX_GEN;
         this.driverList = driverList;
         this.taskList = taskList;
@@ -94,4 +94,12 @@ public abstract class IDS {
      * 解的评价
      */
     protected abstract void evaluate();
+
+    protected void printFit() {
+        if (fitnessType.equalsIgnoreCase("profit")) {
+            System.out.println(1 / bestF * 100000);
+        } else {
+            System.out.println(bestF);
+        }
+    }
 }

@@ -32,8 +32,8 @@
                     <select name="algo">
                         <option value="CFPS">CFPS</option>
                         <option value="CFPSST">CFPSST</option>
-                        <option value="GA">GA</option>
-                        <option value="PSO">PSO</option>
+                        <option value="GA">GA-TABU</option>
+                        <option value="PSO">PSO-SA</option>
                         <option value="SS">SS</option>
                         <option value="ABC">ABC</option>
                     </select>
@@ -273,8 +273,10 @@
             para.b1 = field.b1;
             para.b2 = field.b2;
 
+            var index = layer.load(0, {shade: false});
             $.post("/map/data", para, function (data) {
                 if (data) {
+                    layer.close(index);
                     map.clearOverlays();
                     var routeList = data.routeList;
                     var fitness = data.fitness;
@@ -304,7 +306,7 @@
                         var polyline = new BMap.Polyline(points, {
                             strokeColor: getRandomColor(),
                             strokeWeight: 1,
-                            strokeOpacity: 0.5
+                            strokeOpacity: 0.8
                         });   //创建折线
                         map.addOverlay(polyline);
                     }

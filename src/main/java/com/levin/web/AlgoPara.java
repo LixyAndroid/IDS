@@ -12,7 +12,7 @@ public class AlgoPara {
     private String fitnessType = "distance";
     private Integer alpha = 200;
     private Integer beta = 50;
-    private Integer gama = 50;
+    private Integer gama = 200;
     private Integer b1 = 20;
     private Integer b2 = 30;
 }

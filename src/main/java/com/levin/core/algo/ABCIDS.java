@@ -34,7 +34,7 @@ public class ABCIDS extends IDS {
     /**
      * 无法通过limit次搜索改进的实物源被抛弃
      */
-    private int limit = 100;
+    private int limit = 10;
 
     /**
      * 目标函数值
@@ -250,6 +250,7 @@ public class ABCIDS extends IDS {
                 bestS = population.get(i);
             }
         }
+        System.out.println(bestF);
     }
 
     /**

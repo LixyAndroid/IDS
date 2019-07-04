@@ -61,7 +61,7 @@ public class PsoIDS extends IDS {
      */
     public void init() {
         super.init();
-        size = 10;
+        size = 5;
     }
 
 
@@ -87,7 +87,7 @@ public class PsoIDS extends IDS {
             layerCodes.add((LayerCode) sc);
         }
 
-        ParticleClustering particleClustering = new ParticleClustering(layerCodes, size, 5);
+        ParticleClustering particleClustering = new ParticleClustering(layerCodes, size, 1);
         particleClustering.clustering();
         //使用聚类中心作为初始解集
         mUnits = particleClustering.getClusteringCenterT();
@@ -129,12 +129,16 @@ public class PsoIDS extends IDS {
         for (int i = 0; i < size; i++) {
             if (Pgd.getFitness() > Pd.get(i).getFitness()) {
                 Pgd = Pd.get(i);
+                bestF = Pgd.getFitness();
             }
         }
 
         // 进化
         evolution();
 
+        if (fitnessType.equalsIgnoreCase("profit")) {
+            Pgd.setFitness(1 / bestF * 100000);
+        }
         return Pgd;
 
     }
@@ -144,7 +148,7 @@ public class PsoIDS extends IDS {
      **/
     private boolean isconvergence() {
         int s = Pgds.size();
-        if (s <= MAX_GEN / 100.0) {
+        if (s <= 10) {
             return false;
         }
 
@@ -167,7 +171,7 @@ public class PsoIDS extends IDS {
         while (ratios == 0 || ratios > 0.5) {
             LayerCode layerCode = LayerCodeUtil.genCode(driverList, taskList, fitnessType);
             for (LayerCode p : mUnits) {
-                ratios += LayerCodeUtil.ratio(Md.toString(), p.toString());
+                ratios += LayerCodeUtil.ratio(Pgd.toString(), p.toString());
             }
             ratios = ratios / mUnits.size();
         }
@@ -225,6 +229,7 @@ public class PsoIDS extends IDS {
             for (int i = 0; i < size; i++) {
                 if (Pgd.getFitness() > Pd.get(i).getFitness()) {
                     Pgd = Pd.get(i);
+                    bestF = Pgd.getFitness();
                     Md = null;
                 }
             }
@@ -234,6 +239,11 @@ public class PsoIDS extends IDS {
 
             //退温操作
             T = alpha * T;
+            if (fitnessType.equalsIgnoreCase("profit")) {
+                System.out.println(1 / bestF * 100000);
+            } else {
+                System.out.println(bestF);
+            }
         }
     }
 

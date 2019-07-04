@@ -92,6 +92,7 @@ public class SsIDS extends IDS {
         //初始化
         init();
         for (int i = 0; i < MAX_GEN; i++) {
+            //System.out.println(i);
             //从初始解集中产生参考集 B = B1(多样性解)+B2（优质解）
             genRefer();
             //解的评价
@@ -108,11 +109,20 @@ public class SsIDS extends IDS {
             //子集产生与合并
             segReg();
         }
+        if (fitnessType.equalsIgnoreCase("profit")){
+            bestS.setFitness(1/bestF*100000);
+        }
         return bestS;
     }
 
     @Override
     protected void evaluate() {
+        if (fitnessType.equalsIgnoreCase("profit")) {
+            System.out.println(1 / bestF * 100000);
+        } else {
+            System.out.println(bestF);
+        }
+
         for (SolutionCode sc : referSet) {
             if (sc.getFitness() < bestF && sc.getFitness() > 0) { //此处默认目标函数为最小,如果是最大化问题可使用倒数
                 bestF = sc.getFitness();
@@ -142,11 +152,17 @@ public class SsIDS extends IDS {
                         }
                         //将生成的新解加入到备选解集中
                         if (solutionCode.getFitness() > 0) {
+                            //System.out.println(1);
                             population.add(solutionCode);
                         } else {
+                            /*System.out.println(2);
                             //对于不合法(超载)的解进行修复
                             SolutionCode sc = solutionCode.repair();
-                            population.add(sc);
+                            population.add(sc);*/
+                        }
+
+                        if (population.size() > size * 10) {
+                            return;
                         }
                     }
                 }
@@ -366,7 +382,7 @@ public class SsIDS extends IDS {
                     insert.add(new OrderCode(2, oc.getTask()));
                 }
 
-                if (random.nextFloat() < 0.1) {  //10%的概率让该订单不参与运输
+                if (fitnessType.equalsIgnoreCase("profit") && random.nextFloat() < 0.1) {  //10%的概率让该订单不参与运输
                     List<OrderCode> orderCodeList = vehicleCodeList.get(n - 1).getOrderCodeList();
                     if (orderCodeList == null)
                         vehicleCodeList.set(n - 1, new VehicleCode(vehicleCodeList.get(nextInt).getDriver(), 1, insert));

@@ -88,6 +88,7 @@ public class GaIDS extends IDS {
 
     @Override
     protected void evaluate() {
+       super.printFit();
         for (LayerCode ch : oldPopulation) {
             if (bestF == 0) {
                 bestF = ch.getFitness();
@@ -114,7 +115,7 @@ public class GaIDS extends IDS {
                 }
             }
 
-            if (i != 30) {
+            if (i != size) {
                 break;
             }
         }
@@ -288,7 +289,7 @@ public class GaIDS extends IDS {
             newPathList.add(g);
             if (g.getType() == 2) {
                 //newPath[p++] = new Gene(3, g.getCode());
-                newPathList.add(new Gene(3,g.getCode()));
+                newPathList.add(new Gene(3, g.getCode()));
             }
         }
         Gene[] newPath = newPathList.toArray(new Gene[newPathList.size()]);
@@ -393,6 +394,9 @@ public class GaIDS extends IDS {
 
             t++;
 
+        }
+        if (fitnessType.equalsIgnoreCase("profit")) {
+            bestS.setFitness(1 / bestF * 100000);
         }
         return bestS;
     }

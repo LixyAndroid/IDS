@@ -102,20 +102,22 @@ public abstract class SolutionCode {
      *
      * @param orderCodeList 装箱顺序集合
      */
-    private List<OrderCode> shuff(List<OrderCode> orderCodeList) {
-        if (orderCodeList == null) {
+    private List<OrderCode> shuff(List<OrderCode> orderCodeList2) {
+        if (orderCodeList2 == null) {
             return null;
         }
-        Set<String> tmp = new HashSet<>();
+        List<OrderCode> orderCodeList = new ArrayList<>(orderCodeList2);
+        Map<String, Integer> map = new HashMap<>();
         Collections.shuffle(orderCodeList);
         List<OrderCode> codeList = new ArrayList<>();
         for (OrderCode oc : orderCodeList) {
-            if (!tmp.contains(oc.getTask().getId())) {
+            Integer num = map.getOrDefault(oc.getTask().getId(), 0);
+            if (num % 2 == 0) {
                 codeList.add(new OrderCode(1, oc.getTask()));
             } else {
                 codeList.add(new OrderCode(2, oc.getTask()));
             }
-            tmp.add(oc.getTask().getId());
+            map.put(oc.getTask().getId(), num + 1);
         }
         return codeList;
     }
@@ -156,4 +158,8 @@ public abstract class SolutionCode {
     }
 
     public abstract SolutionCode repair();
+
+    public int getCarNumUsed() {
+        return carNumUsed;
+    }
 }

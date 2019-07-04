@@ -62,7 +62,7 @@ public class CFPSST extends CFPS {
                     continue;
 
                 if (vc.getOrderCodeList() != null && vc.getOrderCodeList().size() > 0) {
-                    List<OrderCode> orderCodes = map.getOrDefault(vc.getDriver().getId(),new ArrayList<>());
+                    List<OrderCode> orderCodes = map.getOrDefault(vc.getDriver().getId(), new ArrayList<>());
                     orderCodes.addAll(vc.getOrderCodeList());
                     map.put(vc.getDriver().getId(), orderCodes);
                 }
@@ -155,7 +155,6 @@ public class CFPSST extends CFPS {
     private void evolution() {
         double sum = 0;
         for (PartitionDto partitionDto : partitionList) {
-            System.out.println("===============");
             if (partitionDto.getDrivers().size() == 0) {
                 System.out.println("该分区没有足够车辆,可在 \'" + partitionDto.getTaskList().get(0).getStart() + "\' 安排新的车辆");
                 continue;
@@ -165,7 +164,7 @@ public class CFPSST extends CFPS {
             List<TransportTask> taskList = randomSplit(partitionDto);
 
             //按分区内车辆数和订单数选择不同算法
-            if (taskList.size() < 3 || partitionDto.getDrivers().size() < 3) { //禁忌搜索
+            if (taskList.size() < 3 && partitionDto.getDrivers().size() < 3) { //禁忌搜索
                 SolutionCode solutionCode = TreeCodeUtil.gencode(taskList, driverList, fitnessType);
                 Set<SolutionCode> set = new HashSet<>(NN);  //禁忌表
                 set.add(solutionCode);
@@ -177,10 +176,9 @@ public class CFPSST extends CFPS {
                         bf = solutionCode.getFitness();
                         bs = solutionCode;
                     }
-                    System.out.println(sum+bf);
                     set.add(solutionCode);
                 }
-                sum += bf;
+                sum += 1 / bf * 100000;
 
                 partitionResult.add(bs);
             } else { //分散搜索
@@ -192,7 +190,6 @@ public class CFPSST extends CFPS {
 
         }
         bestF = sum;
-        System.out.println("最终结果:" + sum);
     }
 
     /**
@@ -267,7 +264,7 @@ public class CFPSST extends CFPS {
                                     StringBuilder str = new StringBuilder(n + "\t" + a + "\t" + b + "\t" + nn + "\t" + b1 + "\t" + b2 + "\t");
                                     for (int i = 0; i < 10; i++) {
                                         IDS solver = new CFPSST(5, DataLab.driverList(path + "vehicle.xls"),
-                                                DataLab.taskList(path + "task.xls",-1), n, "distance", a, b, 100, nn, b1, b2);
+                                                DataLab.taskList(path + "task.xls", -1), n, "distance", a, b, 100, nn, b1, b2);
                                         SolutionCode solve = solver.solve();
                                         str.append(solve.getFitness()).append("\t");
                                         DataLab.clear();
@@ -289,7 +286,7 @@ public class CFPSST extends CFPS {
     public static void test() {
         String path = FileUtils.getAppPath() + "/src/main/resources/";
         IDS solver = new CFPSST(3, DataLab.driverList(path + "vehicle.xls"),
-                DataLab.taskList(path + "task.xls",-1), 100, "distance", 50, 200, 50, 1000, 30, 30);
+                DataLab.taskList(path + "task.xls", -1), 100, "distance", 50, 200, 50, 1000, 30, 30);
         SolutionCode solve = solver.solve();
         System.out.println(solve.getFitness());
         System.out.println(solve.print());

@@ -36,7 +36,7 @@ public class TreeCode extends SolutionCode {
                 for (OrderCode oc : vc.getOrderCodeList()) {
                     if (oc != null) {
                         sb.append("-->").append(oc.getTask().getId())
-                                .append("(").append(oc.getTask().getPlatenNum()).append(",").append(oc.getTask().getStart())
+                                .append("(").append(oc.getType()).append(",").append(oc.getTask().getPlatenNum()).append(",").append(oc.getTask().getStart())
                                 .append(",").append(oc.getTask().getEndCity()).append(")");
                     }
                 }
