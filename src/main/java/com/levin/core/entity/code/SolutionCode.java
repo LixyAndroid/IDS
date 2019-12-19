@@ -125,7 +125,24 @@ public abstract class SolutionCode {
     /**
      * 打印路径
      */
-    public abstract String print();
+    public  String print(){
+        StringBuilder sb = new StringBuilder();
+        for (VehicleCode vc : vehicleCodeList) {
+            sb.append(vc.getDriver().getId()).append("[").append(vc.getDriver().getType()).append("]");
+
+            if (vc.getOrderCodeList() != null) {
+                for (OrderCode oc : vc.getOrderCodeList()) {
+                    if (oc != null) {
+                        sb.append("-->").append(oc.getTask().getId())
+                                .append("(").append(oc.getTask().getPlatenNum()).append(")");
+                    }
+                }
+            }
+
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
 
     public void setDd(double dd) {
         this.dd = dd;

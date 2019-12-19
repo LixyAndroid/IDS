@@ -27,7 +27,8 @@ public class TreeCode extends SolutionCode {
 
     @Override
     public String print() {
-        int k = 1;
+        return super.print();
+        /*int k = 1;
         StringBuilder sb = new StringBuilder();
         for (VehicleCode vc : vehicleCodeList) {
             sb.append(k).append(":\t");
@@ -45,7 +46,7 @@ public class TreeCode extends SolutionCode {
             sb.append("\n");
             k++;
         }
-        return sb.toString();
+        return sb.toString();*/
     }
 
     @Override

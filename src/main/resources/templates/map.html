@@ -238,6 +238,8 @@
         var n = $("#orderNum").val();
         $.getJSON("/map/clustering", {n: n}, function (data) {
             for (let i = 0; i < data.length; i++) {
+                if (i === 3)
+                    break;
                 let area = data[i];
                 var partition = [];
                 for (let j = 0; j < area.length; j++) {

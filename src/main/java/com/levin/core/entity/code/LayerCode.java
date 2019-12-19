@@ -31,7 +31,7 @@ public class LayerCode extends SolutionCode {
 
     @Override
     public String print() {
-        return null;
+        return super.print();
     }
 
     @Override

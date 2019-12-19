@@ -88,7 +88,7 @@ public class GaIDS extends IDS {
 
     @Override
     protected void evaluate() {
-       super.printFit();
+        //super.printFit();
         for (LayerCode ch : oldPopulation) {
             if (bestF == 0) {
                 bestF = ch.getFitness();
@@ -137,7 +137,7 @@ public class GaIDS extends IDS {
                     bestS = neighbor;
                     bestF = neighbor.getFitness();
                 }
-                tabuList.add((LayerCode) neighbor);
+                tabuList.add(neighbor);
             }
             neighbor = (LayerCode) neighbor.bestNeighbor(1, 0);
         }
@@ -333,12 +333,12 @@ public class GaIDS extends IDS {
     public void evolution() {
         //禁忌搜索
         copy();
-        for (LayerCode ch : oldPopulation) {
+     /*   for (LayerCode ch : oldPopulation) {
             float rand = random.nextFloat();
             if (rand < ch.getFitness() / Favg) {
                 tabu(ch);
             }
-        }
+        }*/
 
         oldPopulation = tmpPopulation;
         tmpPopulation = new ArrayList<>();

@@ -43,6 +43,21 @@ public class DataLab {
         return driverList;
     }
 
+    public static List<Driver> driverList(String path, int start, int num) {
+        if (driverList != null && driverList.size() > 0) {
+            int end = Math.min(start + num, driverList.size());
+            return driverList.subList(start, end);
+        }
+
+        File file = new File(path);
+        if (!file.exists()) {
+            return new ArrayList<>();
+        }
+        driverList = ExcelImportUtil.importExcel(file, Driver.class, new ImportParams());
+        int end = Math.min(start + num, driverList.size());
+        return driverList.subList(start, end);
+    }
+
     /**
      * 从excel文件获取任务列表
      *
@@ -60,6 +75,21 @@ public class DataLab {
         }
         transportTaskList = ExcelImportUtil.importExcel(file, TransportTask.class, new ImportParams());
         return chooseTask(n);
+    }
+
+    public static List<TransportTask> taskList(String path, int start, int num) {
+        if (transportTaskList != null && transportTaskList.size() > 0) {
+            int end = Math.min(start + num, transportTaskList.size());
+            return transportTaskList.subList(start, end);
+        }
+
+        File file = new File(path);
+        if (!file.exists()) {
+            return new ArrayList<>();
+        }
+        transportTaskList = ExcelImportUtil.importExcel(file, TransportTask.class, new ImportParams());
+        int end = Math.min(start + num, transportTaskList.size());
+        return transportTaskList.subList(start, end);
     }
 
     /**
@@ -194,11 +224,6 @@ public class DataLab {
         distance = null;
     }
 
-    public static void main(String[] args) {
-        String path = FileUtils.getAppPath() + "/src/main/resources";
-        List<Driver> drivers = driverList(path + "/vehicle.xls");
-        System.out.println(drivers.size());
-    }
 
     public static Driver getDriver(String code) {
         for (Driver driver : driverList) {
@@ -248,5 +273,18 @@ public class DataLab {
             }
         }
         return result;
+    }
+
+    public static void main(String[] args) {
+        String path = FileUtils.getAppPath() + "/src/main/resources";
+        List<TransportTask> taskList = taskList(path + "/task.xls", 30);
+        for (TransportTask task : taskList) {
+            String sb = task.getId() + "\t" + task.getPlatenNum() + "\t" +
+                    task.getPlatenDate() + "\t" + task.getStart() + "\t" +
+                    task.getLat1() + "\t" + task.getLng1() + "\t" +
+                    task.getEndCity() + "\t" + task.getLat2() + "\t" + task.getLng2() + "\t" +
+                    task.getAmount() + "\t" + task.getTw() + "\t";
+            System.out.println(sb);
+        }
     }
 }

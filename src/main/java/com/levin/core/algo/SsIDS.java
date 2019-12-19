@@ -4,6 +4,7 @@ import com.levin.core.entity.code.*;
 import com.levin.excel.Driver;
 import com.levin.excel.TransportTask;
 import com.levin.core.entity.code.LayerCodeUtil;
+import com.levin.util.FileUtils;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -17,6 +18,7 @@ import static java.util.stream.Collectors.toCollection;
  */
 public class SsIDS extends IDS {
 
+    private static final String savePath = FileUtils.getAppPath() + "/src/main/resources/ss/ss_" + System.currentTimeMillis() + ".txt";
     private static DecimalFormat decimalFormat = new DecimalFormat("#.00");
 
     /**
@@ -109,8 +111,8 @@ public class SsIDS extends IDS {
             //子集产生与合并
             segReg();
         }
-        if (fitnessType.equalsIgnoreCase("profit")){
-            bestS.setFitness(1/bestF*100000);
+        if (fitnessType.equalsIgnoreCase("profit")) {
+            bestS.setFitness(1 / bestF * 100000);
         }
         return bestS;
     }
@@ -118,9 +120,11 @@ public class SsIDS extends IDS {
     @Override
     protected void evaluate() {
         if (fitnessType.equalsIgnoreCase("profit")) {
-            System.out.println(1 / bestF * 100000);
+            //System.out.println(1 / bestF * 100000);
+            //FileUtils.writeFile(savePath, "1 / bestF * 100000\n");
         } else {
-            System.out.println(bestF);
+            //FileUtils.writeFile(savePath, "bestF\n");
+            //System.out.println(bestF);
         }
 
         for (SolutionCode sc : referSet) {
