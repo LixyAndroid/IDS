@@ -18,7 +18,9 @@ public class BmapUtils {
     /**
      * 百度地图appKey
      */
-    private static final String appKey = "xCu3FguwuzydfnufqVd1bQAgRNm827Dh";
+    //private static final String appKey = "xCu3FguwuzydfnufqVd1bQAgRNm827Dh";
+    //private static final String appKey = "iSfW8ELpvp6m3IRPL1m8PI4Y0661WTqp";
+    private static final String appKey = "3YFZnNVuCQQxzf2Qya9yHzWCFhSNMh1z";
     /**
      * 百度地图api
      */

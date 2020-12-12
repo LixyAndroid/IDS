@@ -1,7 +1,9 @@
 package com.levin;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -11,7 +13,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 /**
  * SpringBoot程序入口
  */
-@SpringBootApplication
+
+@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @EnableCaching
 @EnableScheduling
 public class Application {
