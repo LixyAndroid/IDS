@@ -14,7 +14,6 @@ import com.levin.excel.TransportTask;
 import com.levin.util.FileUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -74,7 +73,7 @@ public class MapController {
     @ResponseBody
     public List<List<Point>> clustering(Integer n) {
         String path = FileUtils.getAppPath() + "/src/main/resources/";
-        CFPSST cfpsst = new CFPSST(0, DataLab.driverList(path + "vehicle.xls"), DataLab.taskList(path + "task.xls", n), 1, "distance", 50, 200, 100, 100, 10, 30);
+        CFPSST cfpsst = new CFPSST(100, DataLab.driverList(path + "vehicle.xls"), DataLab.taskList(path + "task.xls", n), 1, "distance", 50, 200, 100, 100, 10, 30);
         List<PartitionDto> partition = cfpsst.partition2();
 
         List<List<Point>> result = new ArrayList<>();

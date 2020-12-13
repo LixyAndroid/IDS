@@ -32,7 +32,7 @@ public class SolverFactory {
             return new CFPS(para.getMaxGen(), DataLab.driverList(path + "vehicle.xls"),
                     DataLab.taskList(path + "task.xls", n), para.getSize(), para.getFitnessType(), para.getAlpha(), para.getBeta(), para.getN());
         } else if (algo.equalsIgnoreCase("ga")) {
-            return new GaIDS(para.getMaxGen(), DataLab.driverList(path + "vehicle.xls"),
+            return new GAIDS(para.getMaxGen(), DataLab.driverList(path + "vehicle.xls"),
                     DataLab.taskList(path + "task.xls", n), para.getSize(), para.getFitnessType(), para.getN());
         } else if (algo.equalsIgnoreCase("pso")) {
             return new PsoIDS(para.getMaxGen(), DataLab.driverList(path + "vehicle.xls"),

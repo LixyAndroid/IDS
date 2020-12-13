@@ -1,4 +1,4 @@
-import com.levin.core.algo.GaIDS;
+import com.levin.core.algo.GAIDS;
 import com.levin.core.entity.code.SolutionCode;
 import com.levin.excel.DataLab;
 import com.levin.util.FileUtils;
@@ -15,7 +15,7 @@ public class GaTest {
     private static void staticValidate() {
         AlgoPara para = new AlgoPara();
         para.setMaxGen(1000);
-        GaIDS ga = new GaIDS(para.getMaxGen(), DataLab.driverList(path + "vehicle1.xls"),
+        GAIDS ga = new GAIDS(para.getMaxGen(), DataLab.driverList(path + "vehicle1.xls"),
                 DataLab.taskList(path + "task1.xls", -1), para.getSize(), para.getFitnessType(), para.getN());
         SolutionCode solve = ga.solve();
         System.out.println(solve.print());

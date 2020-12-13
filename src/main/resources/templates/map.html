@@ -21,7 +21,7 @@
 </head>
 <body>
 <div style="width: 20%;float: left;opacity:100%">
-    <img src="logo.png">
+    <img src="https://www.gdut.edu.cn/images2020/logo2.png" width="300" style="padding-left:20px;padding-top: 10px">
     <fieldset class="layui-elem-field layui-field-title">
         <legend>算法参数</legend>
     </fieldset>
@@ -111,7 +111,7 @@
                     <button class="layui-btn layui-btn-fluid" lay-submit="" lay-filter="para">提交</button>
                 </div>
             </div>-->
-            <button class="layui-btn layui-btn-fluid" lay-submit="" lay-filter="para"
+            <button class="layui-btn layui-btn-fluid"  lay-submit="" lay-filter="para"
                     style="width: 80%;margin-left: 10%;margin-top: 30px">提交
             </button>
 
@@ -129,7 +129,7 @@
 <div id="allmap" style="margin-top: 0;width: 80%;float: right"></div>
 </body>
 </html>
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.5.1.min.js"></script>
 <script type="text/javascript">
 
     //鼠标悬浮
@@ -201,9 +201,10 @@
                     map.addOverlay(marker);              // 将标注添加到地图中
                     map.addOverlay(marker2);              // 将标注添加到地图中
                     marker.addEventListener("click", getAttr);
-                var polyline = new BMap.Polyline([start, end
-                ], {strokeColor: "blue", strokeWeight: 5, strokeOpacity: 0.5});   //创建折线
-                map.addOverlay(polyline);
+                //不需要连线
+                //var polyline = new BMap.Polyline([start, end
+                //], {strokeColor: "blue", strokeWeight: 5, strokeOpacity: 0.5});   //创建折线
+                //map.addOverlay(polyline);
             }
 
             var options1 = {
@@ -238,7 +239,7 @@
     }
 
     function clustering() {
-        //map.clearOverlays();
+        map.clearOverlays();
         var n = $("#orderNum").val();
         $.getJSON("/map/clustering", {n: n}, function (data) {
             for (let i = 0; i < data.length; i++) {
