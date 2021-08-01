@@ -277,7 +277,7 @@ public class DataLab {
 
     public static void main(String[] args) {
         String path = FileUtils.getAppPath() + "/src/main/resources";
-        List<TransportTask> taskList = taskList(path + "/task.xls", 30);
+        List<TransportTask> taskList = taskList(path + "/task.xls", 10);
         for (TransportTask task : taskList) {
             String sb = task.getId() + "\t" + task.getPlatenNum() + "\t" +
                     task.getPlatenDate() + "\t" + task.getStart() + "\t" +

@@ -66,7 +66,7 @@ public class MapController {
     @RequestMapping("/task")
     @ResponseBody
     public List<TransportTask> task() {
-        return DataLab.taskList(FileUtils.getAppPath() + "/src/main/resources/task.xls", -1);
+        return DataLab.taskList(FileUtils.getAppPath() + "/src/main/resources/task.xls", 50);
     }
 
     @RequestMapping("/clustering")

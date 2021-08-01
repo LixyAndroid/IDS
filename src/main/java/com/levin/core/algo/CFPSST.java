@@ -286,7 +286,7 @@ public class CFPSST extends CFPS {
     public static void test() {
         String path = FileUtils.getAppPath() + "/src/main/resources/";
         IDS solver = new CFPSST(3, DataLab.driverList(path + "vehicle.xls"),
-                DataLab.taskList(path + "task.xls", -1), 100, "distance", 50, 200, 50, 1000, 30, 30);
+                DataLab.taskList(path + "task.xls", 10), 100, "distance", 50, 200, 50, 1000, 30, 30);
         SolutionCode solve = solver.solve();
         System.out.println(solve.getFitness());
         System.out.println(solve.print());
